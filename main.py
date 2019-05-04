@@ -1,9 +1,9 @@
-import os
+# import os
 
 import telebot
 from telebot.types import Message
 
-bot = telebot.TeleBot(os.environ.get("token"))
+bot = telebot.TeleBot('886072920:AAGP_OzHa8bv_s90OSk6mF-HJonxlfEfnbw')
 
 
 # TODO: сделать регу
