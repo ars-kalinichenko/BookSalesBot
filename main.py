@@ -18,8 +18,7 @@ def welcome(message: Message):
 
 @bot.message_handler(func=lambda message: True)
 def upper(message: Message):
-    bot.send_message(message.chat.id,
-                     "Бот временно не работает, но мы уже утраняем эту проблему. Пожалуйста, подождите.")
+    bot.reply_to(message, "Посмотри аниме, а не трать время впустую!".upper())
 
 
 bot.polling()
