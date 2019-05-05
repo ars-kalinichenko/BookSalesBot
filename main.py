@@ -25,7 +25,7 @@ def upper(message: Message):
     logger.push_msg_to_log(message)
     with open('m.txt', 'w') as file:
         file.write(message.text)
-    logging.CRITICAL('ffff')
+    logging.INFO('{} sent "{}"'.format(message.from_user.username, message.text))
 
 
 bot.polling()
