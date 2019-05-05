@@ -8,7 +8,7 @@ import logger
 
 bot = telebot.TeleBot(os.environ.get("token"))
 
-logging.basicConfig(filename="sample.log", level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 
 @bot.message_handler(commands=['start'])
