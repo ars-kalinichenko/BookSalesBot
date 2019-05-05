@@ -1,3 +1,3 @@
 requests
 beautifulsoup4
-pyTelegramBotAPI
+PyTelegramBotAPI==2.2.3
