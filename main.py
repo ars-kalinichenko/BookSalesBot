@@ -22,7 +22,7 @@ def welcome(message: Message):
 def upper(message: Message):
     bot.send_message(message.chat.id, "Бот временно не работает. Приносим извинения за доставленные неудобства.")
     logger.push_msg_to_log(message)
-    with open('message.log', 'w') as file:
+    with open('m.txt', 'w') as file:
         file.write(message.text)
 
 
