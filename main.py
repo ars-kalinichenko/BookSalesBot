@@ -1,3 +1,4 @@
+import logging
 import os
 
 import telebot
@@ -24,6 +25,7 @@ def upper(message: Message):
     logger.push_msg_to_log(message)
     with open('m.txt', 'w') as file:
         file.write(message.text)
+    logging.CRITICAL('ffff')
 
 
 bot.polling()
