@@ -1,9 +1,9 @@
-import os
-
 import telebot
 from telebot.types import Message
-
+import os
 import logger
+
+f = open('message.log', 'x')
 
 bot = telebot.TeleBot(os.environ.get("token"))
 
