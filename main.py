@@ -8,6 +8,8 @@ import logger
 
 bot = telebot.TeleBot(os.environ.get("token"))
 
+logging.basicConfig(filename="sample.log", level=logging.INFO)
+
 
 @bot.message_handler(commands=['start'])
 def welcome(message: Message):
@@ -23,9 +25,9 @@ def welcome(message: Message):
 def upper(message: Message):
     bot.send_message(message.chat.id, "Бот временно не работает. Приносим извинения за доставленные неудобства.")
     logger.push_msg_to_log(message)
-    with open('m.txt', 'w') as file:
-        file.write(message.text)
-    logging.INFO('{} sent "{}"'.format(message.from_user.username, message.text))
+    logging.debug("This is a debug message")
+    logging.info("Informational message")
+    logging.error("An error has happened!")
 
 
 bot.polling()
