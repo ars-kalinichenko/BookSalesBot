@@ -6,10 +6,9 @@ import requests
 class IParser(ABC):
     url_from = None
 
-    def __init__(self, url):
+    def set_url(self, url):
         self.url_from = url
-
-    html = requests.get(url_from).text
+        self.html = requests.get(self.url_from).text
 
     @abstractmethod
     def get_price(self, html):
