@@ -3,7 +3,7 @@ import logging
 from telebot.types import Message
 
 
-def push_msg_to_cout(message: Message):
+def show_msg(message: Message):
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.INFO)
@@ -11,7 +11,7 @@ def push_msg_to_cout(message: Message):
     logging.info('{} sent "{}"'.format(message.from_user.username, message.text))
 
 
-def push_error_cout(**kwargs):
+def show_error(**kwargs):
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.DEBUG)
