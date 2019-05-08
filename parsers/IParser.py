@@ -5,6 +5,7 @@ import requests
 
 class IParser(ABC):
     url_from = None
+    html = None
 
     def get_html(self, url):
         self.url_from = url

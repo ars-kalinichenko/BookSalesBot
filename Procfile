@@ -1,1 +1,1 @@
-booksalesbot: python3 main.py
+booksalesbot: python3 bot.py

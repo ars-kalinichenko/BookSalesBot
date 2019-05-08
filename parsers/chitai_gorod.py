@@ -4,6 +4,7 @@ from parsers.IParser import IParser
 
 
 class ChitaiGorod(IParser):
+    """Parser for Chitai_Gorod.ru"""
 
     def get_price(self, html):
         soup = BeautifulSoup(html, 'html.parser')
@@ -26,5 +27,5 @@ class ChitaiGorod(IParser):
     def parsing(self, url):
         self.get_html(url)
         print(self.get_title(self.html))
-        print(self.get_image_link(self.html))
         print(self.get_price(self.html))
+        print(self.get_image_link(self.html))

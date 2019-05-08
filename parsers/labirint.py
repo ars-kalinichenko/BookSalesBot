@@ -7,7 +7,8 @@ class Labirint(IParser):
     """Parser for Labirint.ru"""
 
     def get_price(self, html):
-        """This method return a price of book"""
+        """This method returns the current book price"""
+
         soup = BeautifulSoup(html, 'html.parser')
         prices = soup.select('div.buying-price')
         if len(prices) == 0:
@@ -30,5 +31,5 @@ class Labirint(IParser):
     def parsing(self, url):
         self.get_html(url)
         print(self.get_title(self.html))
-        print(self.get_image_link(self.html))
         print(self.get_price(self.html))
+        print(self.get_image_link(self.html))
