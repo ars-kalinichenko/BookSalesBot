@@ -25,10 +25,13 @@ class ChitaiGorod(IParser):
 
     def count_pages(self, html):
         soup = BeautifulSoup(html, 'html.parser')
-        title = soup.find(class_='product__properties')
-        title = title.find_all(class_='product-prop__value')[7]
-        title = title.get_text()
-        return [int(s) for s in title.split() if s.isdigit()][0]
+        pages = soup.find(class_='product__properties')
+
+        for product_prop in pages.find_all(class_='product-prop'):
+            for i in product_prop.find_all(class_='product-prop__title'):
+                print(i.get_text() == 'Кол-во страниц')
+        pages = pages.get_text()
+        return [int(s) for s in pages.split() if s.isdigit()][0]
 
     def parsing(self, url):
         self.get_html(url)

@@ -1,7 +1,7 @@
 from parsers import labirint, chitai_gorod
 
 
-def check_state(url: str):
+def add_book(url: str):
     if 'https://www.labirint.ru/books/' in url:
         lab = labirint.Labirint()
         try:
@@ -17,7 +17,10 @@ def check_state(url: str):
 
 
 def main():
-    check_state("https://www.chitai-gorod.ru/catalog/book/1188066/?watch_fromlist=cat_9657")
+    try:
+        add_book("https://www.chitai-gorod.ru/catalog/book/1186352/?watch_fromlist=cat_9000")
+    except TypeError:
+        print("Введите правильную ссылку")
 
 
 if __name__ == '__main__':
