@@ -25,15 +25,8 @@ class Labirint(IParser):
         img = soup.find("div", {"id": "product-image"})
         return img.select("img[src]")[0]['data-src']
 
-    def count_pages(self, html):
-        soup = BeautifulSoup(html, 'html.parser')
-        pages = soup.find(class_='pages2')
-        pages = pages.get_text()
-        return [int(s) for s in pages.split() if s.isdigit()][0]
-
     def parsing(self, url):
         self.get_html(url)
         print(self.get_title(self.html))
         print(self.get_image_link(self.html))
         print(self.get_price(self.html))
-        print(self.count_pages(self.html))

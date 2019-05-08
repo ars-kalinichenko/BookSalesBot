@@ -18,9 +18,9 @@ def add_book(url: str):
 
 def main():
     try:
-        add_book("https://www.chitai-gorod.ru/catalog/book/1186352/?watch_fromlist=cat_9000")
-    except TypeError:
-        print("Введите правильную ссылку")
+        add_book("https://www.labirint.ru/books/697212/")
+    except IndexError:
+        print("Пофикси!")
 
 
 if __name__ == '__main__':

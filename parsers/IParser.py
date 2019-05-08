@@ -21,7 +21,3 @@ class IParser(ABC):
     @abstractmethod
     def get_image_link(self, html):
         pass
-
-    @abstractmethod
-    def count_pages(self, html):
-        pass

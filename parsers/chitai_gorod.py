@@ -23,19 +23,8 @@ class ChitaiGorod(IParser):
         img = soup.select("div.product__image img[src]")
         return img[0]["src"]
 
-    def count_pages(self, html):
-        soup = BeautifulSoup(html, 'html.parser')
-        pages = soup.find(class_='product__properties')
-
-        for product_prop in pages.find_all(class_='product-prop'):
-            for i in product_prop.find_all(class_='product-prop__title'):
-                print(i.get_text() == 'Кол-во страниц')
-        pages = pages.get_text()
-        return [int(s) for s in pages.split() if s.isdigit()][0]
-
     def parsing(self, url):
         self.get_html(url)
         print(self.get_title(self.html))
         print(self.get_image_link(self.html))
         print(self.get_price(self.html))
-        print(self.count_pages(self.html))
