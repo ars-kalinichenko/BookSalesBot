@@ -16,9 +16,12 @@ def welcome(message: Message):
     logger.show_msg(message)
 
 
-@bot.message_handler(func=lambda message: True)
-def upper(message: Message):
-    bot.send_message(message.chat.id, "Бот временно не работает. Приносим извинения за доставленные неудобства.")
+@bot.message_handler(content_types=['text'])
+def reply(message: Message):
+    if "добавить" in message.text.lower():
+        bot.send_message(message.chat.id, "Хмм")
+    else:
+        bot.send_message(message.chat.id, "Бот временно не работает. Приносим извинения за доставленные неудобства.")
     logger.show_msg(message)
 
 
