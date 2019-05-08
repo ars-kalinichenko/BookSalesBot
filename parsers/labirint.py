@@ -10,6 +10,8 @@ class Labirint(IParser):
         """This method return a price of book"""
         soup = BeautifulSoup(html, 'html.parser')
         prices = soup.select('div.buying-price')
+        if len(prices) == 0:
+            prices = soup.select('div.buying-pricenew-val')
         prices = prices[0].get_text()
         return [int(s) for s in prices.split() if s.isdigit()][0]
 

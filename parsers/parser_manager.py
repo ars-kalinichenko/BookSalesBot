@@ -17,10 +17,7 @@ def add_book(url: str):
 
 
 def main():
-    try:
-        add_book("https://www.labirint.ru/books/697212/")
-    except IndexError:
-        print("Пофикси!")
+    add_book("https://www.labirint.ru/books/694529/")
 
 
 if __name__ == '__main__':
