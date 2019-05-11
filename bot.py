@@ -2,6 +2,7 @@ import telebot
 from telebot.types import Message
 import os
 import logger
+import IOC
 
 bot = telebot.TeleBot(os.environ.get("token"))
 
@@ -19,6 +20,7 @@ def welcome(message: Message):
 @bot.message_handler(content_types=['text'])
 def reply(message: Message):
     if "добавить" in message.text.lower():
+        IOC.queue_url.put(message.text.split(' ')[-1])
         bot.send_message(message.chat.id, "Хмм")
     else:
         bot.send_message(message.chat.id, "Бот временно не работает. Приносим извинения за доставленные неудобства.")
