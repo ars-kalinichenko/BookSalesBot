@@ -3,6 +3,7 @@ from telebot.types import Message
 import os
 import logger
 import IOC
+from parsers import parser_manager
 
 bot = telebot.TeleBot(os.environ.get("token"))
 
@@ -22,6 +23,8 @@ def reply(message: Message):
     if "добавить" in message.text.lower():
         IOC.queue_url.put(message.text.split(' ')[-1])
         bot.send_message(message.chat.id, "Хмм")
+        book = parser_manager.add_book('https://www.chitai-gorod.ru/catalog/book/1188153/?watch_fromlist=cat_9072')
+        bot.send_message(message.chat.id, book['price'])
     else:
         bot.send_message(message.chat.id, "Бот временно не работает. Приносим извинения за доставленные неудобства.")
     logger.show_msg(message)
