@@ -27,7 +27,7 @@ def reply(message: Message):
         bot.send_message(message.chat.id, "Хмм")
         book = parser_manager.add_book(IOC.queue_url.get()) #TODO: remove
         bot.send_message(message.chat.id,
-                         f'Вы уверены,что хотите добавить книгу "{book["title"]}" за {book["price"]} рублей?')
+                         f'Вы уверены,что хотите добавить "{book["title"]}" за {book["price"]} рублей?')
     else:
         bot.send_message(message.chat.id, "Бот временно не работает. Приносим извинения за доставленные неудобства.")
     logger.show_msg(message)

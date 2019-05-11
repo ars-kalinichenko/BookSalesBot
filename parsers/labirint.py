@@ -13,7 +13,7 @@ class Labirint(IParser):
         soup = BeautifulSoup(html, 'html.parser')
         prices = soup.select('div.buying-price')
         if len(prices) == 0:
-            prices = soup.select('div.buying-pricenew-val')
+            prices = soup.select('div.buying-pricenew')
         prices = prices[0].get_text()
         return [int(s) for s in prices.split() if s.isdigit()][0]
 
@@ -22,6 +22,8 @@ class Labirint(IParser):
         title = soup.find(class_='prodtitle')
         title = title.find_all('h1')
         title = title[0].get_text()
+        if ':' not in title:
+            return title.strip()
         return title.split(':')[1].strip()
 
     def get_image_link(self, html):
