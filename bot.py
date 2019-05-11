@@ -25,7 +25,7 @@ def reply(message: Message):
     if "добавить" in message.text.lower():
         IOC.queue_url.put(message.text.split(' ')[-1])
         bot.send_message(message.chat.id, "Хмм")
-        book = parser_manager.add_book(IOC.queue_url[0])
+        book = parser_manager.add_book(IOC.queue_url.get())
         bot.send_message(message.chat.id,
                          f"Вы уверены,что хотите добавить книгу {book['title']} за {book['price']} рублей?")
     else:
