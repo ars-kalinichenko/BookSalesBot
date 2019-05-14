@@ -1,1 +1,1 @@
-booksalesbot: python3 userIn.py
+booksalesbot: python3 bot/userIn.py
