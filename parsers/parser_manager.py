@@ -1,6 +1,6 @@
 from time import sleep
 
-import IOC
+import ioc
 from parsers import labirint, chitai_gorod
 
 
@@ -22,9 +22,8 @@ def check_book():
 
 
 def main():
-    for url in IOC.queue_url:
+    for url in ioc.queue_url:
         add_book(url)
-    # add_book("https://www.chitai-gorod.ru/catalog/book/1188153/?watch_fromlist=cat_9072")
 
 
 if __name__ == '__main__':

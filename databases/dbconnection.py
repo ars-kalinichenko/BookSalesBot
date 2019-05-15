@@ -1,15 +1,20 @@
-import psycopg2
 import os
+
+import psycopg2
 
 
 class DatabaseConnection:
     def __init__(self):
         try:
             self.connection = psycopg2.connect(
-                f"dbname={os.environ.get('dbname')} user={os.environ.get('dbuser')} password={os.environ.get('dbpassword')} host={os.environ.get('dbhost')} port={os.environ.get('dbport')}")
+                f"dbname={os.environ.get('dbname')} \
+                  user={os.environ.get('dbuser')} \
+                  password={os.environ.get('dbpassword')} \
+                  host={os.environ.get('dbhost')} \
+                  port={os.environ.get('dbport')}")
             self.connection.autocommit = True
             self.cursor = self.connection.cursor()
-        except:
+        except Exception:
             print("Error ...")
 
     def create_table(self):

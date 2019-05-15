@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-from parsers.IParser import IParser
+from parsers.iparser import IParser
 
 
 class Labirint(IParser):

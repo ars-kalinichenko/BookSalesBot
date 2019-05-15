@@ -3,7 +3,7 @@ import os
 import telebot
 from telebot.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
-import IOC
+import ioc
 import detail
 import logger
 from bot import action
@@ -32,7 +32,7 @@ def welcome(message: Message):
 def reply(message: Message):
     if "добавить" in message.text.lower():
         url = message.text.split(' ')[-1]
-        IOC.queue_url.put(url)
+        ioc.queue_url.put(url)
 
         action.typing(1, message)
         bot.send_message(message.chat.id, "Хмм")
