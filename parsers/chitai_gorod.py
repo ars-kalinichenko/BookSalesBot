@@ -27,6 +27,7 @@ class ChitaiGorod(IParser):
 
     def parsing(self, url):
         self.get_html(url)
+        self.detail_book['url'] = url
         self.detail_book['title'] = self.get_title(self.html)
         self.detail_book['price'] = self.get_price(self.html)
         self.detail_book['image'] = self.get_image_link(self.html)

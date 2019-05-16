@@ -3,10 +3,11 @@ import os
 import telebot
 from telebot.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
-import ioc
 import detail
+import ioc
 import logger
 from bot import action
+from databases.database import Database
 from parsers import parser_manager
 
 bot = telebot.TeleBot(os.environ.get("token"))
@@ -31,18 +32,21 @@ def welcome(message: Message):
 @bot.message_handler(content_types=['text'])
 def reply(message: Message):
     if "добавить" in message.text.lower():
+        database = Database()
         url = message.text.split(' ')[-1]
         ioc.queue_url.put(url)
 
         action.typing(1, message)
         bot.send_message(message.chat.id, "Хмм")
         book = parser_manager.add_book(url)
+        book['follower'] = list(message.from_user.id)
         try:
             case_rub = f'рубл{detail.ruble_cases[book["price"] % 10]}'
             action.typing(2, message)
             bot.send_message(message.chat.id,
                              f'Вы уверены,что хотите добавить "{book["title"]}" за {book["price"]} {case_rub}?',
                              reply_markup=markup)
+            database.insert_book(book)
         except TypeError:
             bot.send_message(message.chat.id, "Введите правильную ссылку!")
 

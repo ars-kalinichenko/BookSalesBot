@@ -3,7 +3,7 @@ import os
 import psycopg2
 
 
-class DatabaseConnection:
+class Database:
     def __init__(self):
         try:
             self.connection = psycopg2.connect(
@@ -18,25 +18,16 @@ class DatabaseConnection:
             print("Error ...")
 
     def create_table(self):
-        create_table_command = "CREATE TABLE name_table(id serial PRIMARY KEY, title varchar(100), price integer NOT NULL, link varchar(256), link_im varchar(256), followers integer ARRAY)"
+        create_table_command = "CREATE TABLE followers(id serial PRIMARY KEY, name varchar(100), chat_id integer NOT NULL, user_id integer NOT NULL,subscriptions  text ARRAY )"
         self.cursor.execute(create_table_command)
 
-    def insert_book(self):
-        insert_command = "INSERT INTO book(title, price, link, link_im, followers) VALUES('Bill', 100, 'https', 'www', ARRAY[10000, 10000, 10000, 10000])"
+    def insert_book(self, **info):
+        values = f"{info['title']}, {info['price']}, {info['url']}, {info['image']}, {info['follower']}"
+        insert_command = f"INSERT INTO book(title, price, link, link_im, followers) VALUES({values})"
         print(insert_command)
         self.cursor.execute(insert_command)
 
-    def q_a(self):
-        self.cursor.execute("SELECT * FROM book")
-        books = self.cursor.fetchall()
-        for book in books:
-            print(book)
+    def __del__(self):
         self.cursor.close()
         self.connection.close()
 
-
-if __name__ == '__main__':
-    database_connection = DatabaseConnection()
-    # database_connection.create_table()
-    # database_connection.insert_book()
-    database_connection.q_a()
