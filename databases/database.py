@@ -24,7 +24,6 @@ class Database:
     def insert_book(self, info: dict):
         values = f"'{info['title']}', {info['price']}, '{info['url']}', '{info['image']}', ARRAY{info['follower']}"
         insert_command = f"INSERT INTO book(title, price, link, link_im, followers) VALUES({values})"
-        print(insert_command)
         self.cursor.execute(insert_command)
 
     def __del__(self):
