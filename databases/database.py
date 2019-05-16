@@ -21,8 +21,8 @@ class Database:
         create_table_command = "CREATE TABLE followers(id serial PRIMARY KEY, name varchar(100), chat_id integer NOT NULL, user_id integer NOT NULL,subscriptions  text ARRAY )"
         self.cursor.execute(create_table_command)
 
-    def insert_book(self, **info):
-        values = f"{info['title']}, {info['price']}, {info['url']}, {info['image']}, {info['follower']}"
+    def insert_book(self, info: dict):
+        values = f"'{info['title']}', {info['price']}, '{info['url']}', '{info['image']}', ARRAY{info['follower']}"
         insert_command = f"INSERT INTO book(title, price, link, link_im, followers) VALUES({values})"
         print(insert_command)
         self.cursor.execute(insert_command)
@@ -30,4 +30,3 @@ class Database:
     def __del__(self):
         self.cursor.close()
         self.connection.close()
-
