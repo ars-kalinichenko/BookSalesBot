@@ -18,7 +18,6 @@ def reply(message: Message):
         bot_action.adding_book(message)
     else:
         bot_action.small_talk(message)
-    logger.show_msg(message)
 
 
 @bot.callback_query_handler(func=lambda call: True)

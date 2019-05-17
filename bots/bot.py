@@ -22,7 +22,6 @@ class Bot:
         time.sleep(secs)
 
     def adding_book(self, message: Message):
-
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(text="Да", callback_data="add_url"))
         markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_url"))
@@ -45,6 +44,8 @@ class Bot:
         except TypeError:
             self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
 
+        logger.show_msg(message)
+
     def welcome(self, message: Message):
         self.typing(1, message)
         self.bot.send_message(
@@ -61,7 +62,8 @@ class Bot:
         responseJson = json.loads(request.getresponse().read().decode('utf-8'))
         response = responseJson['result']['fulfillment']['speech']
         self.typing(2, message)
-        self.bot.send_message(chat_id=message.from_user.id, text=response)
+        logger.show_msg(message)
+        logger.show_msg(self.bot.send_message(chat_id=message.from_user.id, text=response))
 
     def book_to_db(self, call):
         if call.data == 'add_url':
