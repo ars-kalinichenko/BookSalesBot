@@ -1,8 +1,11 @@
+import json
+import os
 import time
 
+import apiai
 import telebot
 from telebot.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-import os
+
 import detail
 import logger
 from databases.database import Database
@@ -27,11 +30,10 @@ class Bot:
         url = message.text.split(' ')[-1]
 
         self.book = parser_manager.add_book(url)
+        self.book['follower'] = [message.from_user.id]
 
         self.typing(2, message)
         self.bot.send_message(message.chat.id, "Хмм")
-
-        self.book['follower'] = [message.from_user.id]
 
         try:
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 10]}'
@@ -53,15 +55,22 @@ class Bot:
         logger.show_msg(message)
 
     def small_talk(self, message: Message):
+        request = apiai.ApiAI(os.environ.get("smalltalk")).text_request()
+        request.lang = 'ru'
+        request.query = message.text
+        responseJson = json.loads(request.getresponse().read().decode('utf-8'))
+        response = responseJson['result']['fulfillment']['speech']
         self.typing(2, message)
-        self.bot.send_message(message.chat.id,
-                              "Бот временно не работает. Приносим извинения за доставленные неудобства.")
+        self.bot.send_message(chat_id=message.from_user.id, text=response)
 
     def book_to_db(self, call):
         if call.data == 'add_url':
             database = Database()
             database.insert_book(self.book)
             self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список.')
+
+        elif call.data == 'no_add_url':
+            self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр!')
 
         self.bot.edit_message_reply_markup(chat_id=call.message.chat.id,
                                            message_id=call.message.message_id)
