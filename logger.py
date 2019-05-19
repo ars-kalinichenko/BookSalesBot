@@ -10,7 +10,7 @@ def show_msg(message: Message):
     try:
         logging.info('{} sent "{}"'.format(message.from_user.username, message.text))
     except TypeError:
-        logging.info('{} sent "{}"'.format(message.from_user.id, message.text))
+        logging.info('{} sent "{}"'.format("Anonymous", message.text))
 
 
 def show_error(**kwargs):
