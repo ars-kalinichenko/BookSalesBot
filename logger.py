@@ -7,8 +7,10 @@ def show_msg(message: Message):
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.INFO)
-
-    logging.info('{} sent "{}"'.format(message.from_user.username, message.text))
+    try:
+        logging.info('{} sent "{}"'.format(message.from_user.username, message.text))
+    except TypeError:
+        logging.info('{} sent "{}"'.format(message.from_user.id, message.text))
 
 
 def show_error(**kwargs):
