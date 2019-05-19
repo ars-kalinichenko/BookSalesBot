@@ -30,11 +30,11 @@ class Bot:
 
         self.book = parser_manager.add_book(url)
 
-        self.typing(2, message)
+        self.typing(1, message)
         self.bot.send_message(message.chat.id, "Хмм")
-        self.book['follower'] = [message.from_user.id]
 
         try:
+            self.book['follower'] = [message.from_user.id]
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 10]}'
             self.typing(2, message)
             self.bot.send_message(message.chat.id,
