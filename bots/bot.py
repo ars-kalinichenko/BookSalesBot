@@ -29,12 +29,13 @@ class Bot:
         url = message.text.split(' ')[-1]
 
         self.book = parser_manager.add_book(url)
+        if self.book is not None:
+            self.book['follower'] = [message.chat.id]
 
         self.typing(1, message)
         self.bot.send_message(message.chat.id, "Хмм")
 
         try:
-            self.book['follower'] = [message.chat.id]
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 10]}'
             self.typing(2, message)
             self.bot.send_message(message.chat.id,
