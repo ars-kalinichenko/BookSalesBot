@@ -1,6 +1,5 @@
 from telebot.types import Message
 
-import logger
 from bots import bot
 
 bot_action = bot.Bot()
