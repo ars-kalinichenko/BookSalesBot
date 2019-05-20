@@ -1,3 +1,4 @@
+import urllib
 from time import sleep
 
 import ioc
@@ -19,6 +20,12 @@ def add_book(url: str):
 def check_book():
     # some code
     sleep(2 ** 11)
+
+
+def save_photo(url, name_image):
+    extension = url.split(".")[-1]
+    with open(f'{name_image}.{extension}', 'wb') as image:
+        image.write(urllib.request.urlopen(url).read())
 
 
 def main():
