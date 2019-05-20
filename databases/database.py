@@ -23,7 +23,7 @@ class Database:
 
     def insert_book(self, info: dict):
         values = f"'{info['title']}', {info['price']}, '{info['url']}', '{info['image']}', ARRAY{info['follower']}"
-        insert_command = f"INSERT INTO books(title, price, link, link_im, followers) VALUES({values})"
+        insert_command = f"INSERT INTO books(title, price, link, link_image, followers) VALUES({values})"
         self.cursor.execute(insert_command)
 
     def __del__(self):
