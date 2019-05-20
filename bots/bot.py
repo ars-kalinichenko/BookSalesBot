@@ -29,6 +29,7 @@ class Bot:
         url = message.text.split(' ')[-1]
 
         self.book = parser_manager.add_book(url)
+
         if self.book is not None:
             self.book['follower'] = [message.chat.id]
 
