@@ -15,6 +15,7 @@ from parsers import parser_manager
 class Bot:
     def __init__(self):
         self.bot = telebot.TeleBot(os.environ.get("token"))
+
         self.book = {}
 
     def typing(self, secs, message: Message):
@@ -27,22 +28,18 @@ class Bot:
         markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_url"))
 
         url = message.text.split(' ')[-1]
-
         self.book = parser_manager.add_book(url)
 
         if self.book is not None:
             self.book['follower'] = [message.chat.id]
 
-        self.typing(1, message)
-        self.bot.send_message(message.chat.id, "Хмм")
-
         try:
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 10]}'
-            self.typing(2, message)
-            self.bot.send_message(message.chat.id,
-                                  (f'Вы уверены, что хотите добавить: \n'
-                                   f'"{self.book["title"]}" за {self.book["price"]} {case_rub}?'),
-                                  reply_markup=markup)
+            self.typing(1, message)
+            self.bot.send_photo(message.chat.id, photo=open(f"images/{self.book['image_name']}", 'rb'),
+                                caption=(f'Вы уверены, что хотите добавить:\
+                                 "{self.book["title"]}" за {self.book["price"]} {case_rub}?'),
+                                reply_markup=markup)
         except TypeError:
             self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
 
@@ -63,7 +60,7 @@ class Bot:
         request.query = message.text
         responseJson = json.loads(request.getresponse().read().decode('utf-8'))
         response = responseJson['result']['fulfillment']['speech']
-        self.typing(2, message)
+        self.typing(1, message)
         logger.show_msg(message)
         logger.show_msg(self.bot.send_message(chat_id=message.from_user.id, text=response))
 

@@ -1,7 +1,7 @@
-import urllib
+import os.path
 from time import sleep
+from urllib import request as urequest
 
-import ioc
 from parsers import labirint, chitai_gorod
 
 
@@ -9,12 +9,16 @@ def add_book(url: str):
     if 'https://www.labirint.ru/books/' in url:
         lab = labirint.Labirint()
         lab.parsing(url)
+        detail_book = lab.detail_book
+        save_photo(detail_book["image_link"], detail_book["image_name"])
         return lab.detail_book
 
     elif 'https://www.chitai-gorod.ru/catalog/book/' in url:
         ch_gorod = chitai_gorod.ChitaiGorod()
         ch_gorod.parsing(url)
-        return ch_gorod.detail_book
+        detail_book = ch_gorod.detail_book
+        save_photo(detail_book["image_link"], detail_book["image_name"])
+        return detail_book
 
 
 def check_book():
@@ -23,15 +27,6 @@ def check_book():
 
 
 def save_photo(url, name_image):
-    extension = url.split(".")[-1]
-    with open(f'{name_image}.{extension}', 'wb') as image:
-        image.write(urllib.request.urlopen(url).read())
-
-
-def main():
-    for url in ioc.queue_url:
-        add_book(url)
-
-
-if __name__ == '__main__':
-    main()
+    if os.path.isfile(f'images/{name_image}') is False:
+        with open(f'images/{name_image}', 'wb') as image:
+            image.write(urequest.urlopen(url).read())
