@@ -27,6 +27,9 @@ def check_book():
 
 
 def save_photo(url, name_image):
-    if os.path.isfile(f'images/{name_image}') is False:
+    if not os.path.exists("images"):
+        os.mkdir("images")
+
+    if not os.path.isfile(f'images/{name_image}'):
         with open(f'images/{name_image}', 'wb') as image:
             image.write(urequest.urlopen(url).read())
