@@ -18,13 +18,24 @@ class Database:
             print("Error ...")
 
     def create_table(self):
-        create_table_command = "CREATE TABLE followers(name varchar(100), chat_id integer NOT NULL, user_id integer NOT NULL,subscriptions  text ARRAY )"
+        create_table_command = "CREATE TABLE followers(name varchar(100)," \
+                               " chat_id integer NOT NULL, user_id integer NOT NULL," \
+                               " subscriptions text ARRAY )"
         self.cursor.execute(create_table_command)
 
     def insert_book(self, info: dict):
-        values = f"'{info['title']}', {info['price']}, '{info['url']}', '{info['image_link']}', ARRAY{info['follower']}"
-        insert_command = f"INSERT INTO books(title, price, link, link_image, followers) VALUES({values})"
-        self.cursor.execute(insert_command)
+        add_follower_command = f"UPDATE books SET followers = array_append(followers, {info['follower'][0]})" \
+                         f" WHERE link = '{info['link']}' " \
+                         f"and {info['follower'][0]} <> all (followers)"
+
+        self.cursor.execute(add_follower_command)
+
+        insert_book_command = f"INSERT INTO books(title, price, link, link_image, followers) " \
+                              f"SELECT '{info['title']}', {info['price']}, '{info['link']}'," \
+                              f" '{info['image_link']}', ARRAY{info['follower']} " \
+                              f"where not exists(SELECT link FROM books WHERE link = '{info['link']}')"
+
+        self.cursor.execute(insert_book_command)
 
     def __del__(self):
         self.cursor.close()
