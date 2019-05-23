@@ -35,7 +35,7 @@ class Database:
 
             self.cursor.execute(insert_book_command)
         except KeyError:
-            pass
+            return False
 
     def __del__(self):
         self.cursor.close()

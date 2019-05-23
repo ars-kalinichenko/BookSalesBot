@@ -58,8 +58,8 @@ class Bot:
         request = apiai.ApiAI(os.environ.get("smalltalk")).text_request()
         request.lang = 'ru'
         request.query = message.text
-        responseJson = json.loads(request.getresponse().read().decode('utf-8'))
-        response = responseJson['result']['fulfillment']['speech']
+        response_json = json.loads(request.getresponse().read().decode('utf-8'))
+        response = response_json['result']['fulfillment']['speech']
         self.typing(1, message)
         logger.show_msg(message)
         logger.show_msg(self.bot.send_message(chat_id=message.from_user.id, text=response))
@@ -67,8 +67,14 @@ class Bot:
     def book_to_db(self, call):
         if call.data == 'add_url':
             database = Database()
-            database.insert_book(self.book)
-            self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список.')
+            insert_result = database.insert_book(self.book)
+
+            if insert_result is False:
+                self.bot.answer_callback_query(callback_query_id=call.id, text='Что-то пошло не так. \
+                Попробуйте отправить сообщение с ссылкой ещё раз')
+
+            else:
+                self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список.')
 
         elif call.data == 'no_add_url':
             self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр!')
