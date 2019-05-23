@@ -71,8 +71,7 @@ class Bot:
 
             if insert_result is False:
                 self.bot.answer_callback_query(callback_query_id=call.id,
-                                               text='Что-то пошло не так.\n'
-                                                    'Попробуйте отправить сообщение с ссылкой ещё раз')
+                                               text='Попробуйте отправить ссылку ещё раз')
 
             else:
                 self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список.')
