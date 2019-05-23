@@ -71,10 +71,10 @@ class Bot:
 
             if insert_result is False:
                 self.bot.answer_callback_query(callback_query_id=call.id,
-                                               text='Попробуйте отправить ссылку ещё раз')
+                                               text='Попробуйте отправить ссылку ещё раз ❌')
 
             else:
-                self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список.')
+                self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список ✅')
 
         elif call.data == 'no_add_url':
             self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр!')
