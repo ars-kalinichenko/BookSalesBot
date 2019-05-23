@@ -34,7 +34,7 @@ class Bot:
             self.book['follower'] = [message.chat.id]
 
         try:
-            case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 10]}'
+            case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
             self.typing(1, message)
             self.bot.send_photo(message.chat.id, photo=open(f"images/{self.book['image_name']}", 'rb'),
                                 caption='Вы уверены, что хотите добавить:\n'
