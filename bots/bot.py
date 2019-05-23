@@ -37,8 +37,8 @@ class Bot:
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 10]}'
             self.typing(1, message)
             self.bot.send_photo(message.chat.id, photo=open(f"images/{self.book['image_name']}", 'rb'),
-                                caption=(f'Вы уверены, что хотите добавить:\
-                                 "{self.book["title"]}" за {self.book["price"]} {case_rub}?'),
+                                caption='Вы уверены, что хотите добавить:\n'
+                                f'"{self.book["title"]}" за {self.book["price"]} {case_rub}?',
                                 reply_markup=markup)
         except TypeError:
             self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
@@ -70,8 +70,9 @@ class Bot:
             insert_result = database.insert_book(self.book)
 
             if insert_result is False:
-                self.bot.answer_callback_query(callback_query_id=call.id, text='Что-то пошло не так. \
-                Попробуйте отправить сообщение с ссылкой ещё раз')
+                self.bot.answer_callback_query(callback_query_id=call.id,
+                                               text='Что-то пошло не так.\n'
+                                                    'Попробуйте отправить сообщение с ссылкой ещё раз')
 
             else:
                 self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список.')
