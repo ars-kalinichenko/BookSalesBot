@@ -14,12 +14,15 @@ from parsers import parser_manager
 
 class Bot:
     def __init__(self):
+        self.queue_book = {}
         self.bot = telebot.TeleBot(os.environ.get("token"))
         self.book = {}
 
     def typing(self, secs, message: Message):
         self.bot.send_chat_action(message.chat.id, "typing")
         time.sleep(secs)
+
+    # TODO: sending photo
 
     def welcome(self, message: Message):
         database = Database()
@@ -76,10 +79,13 @@ class Bot:
             url = message.text.split(' ')[-1]
             self.book = parser_manager.add_book(url)
 
+            self.queue_book[message.chat.id] = self.book.copy()
+
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
             self.typing(1, message)
-            photo_path = f"images/{self.book['price']}{self.book['image_name']}"
-            self.bot.send_photo(message.chat.id, photo=open(photo_path, 'rb'),
+
+            self.bot.send_photo(message.chat.id,
+                                photo=open(f"images/{self.book['image_name']}", 'rb'),
                                 caption='Вы уверены, что хотите добавить:\n'
                                 f'"{self.book["title"]}" за {self.book["price"]} {case_rub}?',
                                 reply_markup=markup)
@@ -91,9 +97,12 @@ class Bot:
     def book_to_db(self, call):
         if call.data == 'add_url':
             database = Database()
+
+            book_ = self.queue_book[call.message.chat.id]
+
             try:
-                database.insert_book(self.book, [call.message.chat.id])
-                database.insert_follower([self.book['link']], call)
+                database.insert_book(book_, [call.message.chat.id])
+                database.insert_follower([book_['link']], call)
             except KeyError as er:
                 self.bot.answer_callback_query(callback_query_id=call.id,
                                                text='Попробуйте отправить ссылку ещё раз ❌')
@@ -107,3 +116,5 @@ class Bot:
 
         self.bot.edit_message_reply_markup(chat_id=call.message.chat.id,
                                            message_id=call.message.message_id)
+
+        self.queue_book.pop(call.message.chat.id)

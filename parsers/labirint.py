@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-
+from random import randint
 from parsers.iparser import IParser
 
 
@@ -34,7 +34,7 @@ class Labirint(IParser):
     def get_image_name(self, image_link):
         im_extension = image_link.split(".")[-1]
         id_book = image_link.split('/')[4]
-        return f"{id_book}.{im_extension}"
+        return f"{randint(1000, 2000)}{id_book}.{im_extension}"
 
     def parsing(self, url):
         self.get_html(url)

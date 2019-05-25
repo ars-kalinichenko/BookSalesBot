@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-
+from random import randint
 from parsers.iparser import IParser
 
 
@@ -28,7 +28,7 @@ class ChitaiGorod(IParser):
     def get_image_name(self, image_link):
         im_extension = image_link.split(".")[-1]
         id_book = image_link.split('/')[5]
-        return f"{id_book}.{im_extension}"
+        return f"{randint(6000, 10000)}{id_book}.{im_extension}"
 
     def parsing(self, url):
         self.get_html(url)

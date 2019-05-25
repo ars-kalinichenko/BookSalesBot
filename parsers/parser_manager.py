@@ -30,7 +30,7 @@ def save_photo(book: dict):
     if not os.path.exists("images"):
         os.mkdir("images")
 
-    image_name = f"images/{book['price']}{book['image_name']}"
+    image_name = f"images/{book['image_name']}"
 
     if not os.path.isfile(image_name):
         with open(image_name, 'wb') as image:
