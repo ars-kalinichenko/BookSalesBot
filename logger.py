@@ -16,6 +16,6 @@ def show_msg(message: Message):
 def show_error(**kwargs):
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
-                        level=logging.DEBUG)
+                        level=logging.INFO)
 
-    logging.debug('{} sent "{}"'.format(kwargs['system'], kwargs['error']))
+    logging.info('{} FAILED: "{}"'.format(kwargs['system'], kwargs['error']))

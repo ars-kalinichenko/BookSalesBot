@@ -1,6 +1,7 @@
 import os
 
 import psycopg2
+from telebot.types import CallbackQuery
 
 
 class Database:
@@ -14,28 +15,30 @@ class Database:
         self.connection.autocommit = True
         self.cursor = self.connection.cursor()
 
-    def create_table(self):
-        create_table_command = "CREATE TABLE followers(name varchar(100)," \
-                               " chat_id integer NOT NULL, user_id integer NOT NULL," \
-                               " subscriptions text ARRAY )"
-        self.cursor.execute(create_table_command)
+    def insert_book(self, info: dict, follower: list):
+        append_follower_command = f"UPDATE books SET followers = array_append(followers, {follower[0]})" \
+            f" WHERE link = '{info['link']}' " \
+            f"and {follower[0]} <> all (followers)"
 
-    def insert_book(self, info: dict):
-        try:
-            add_follower_command = f"UPDATE books SET followers = array_append(followers, {info['follower'][0]})" \
-                f" WHERE link = '{info['link']}' " \
-                f"and {info['follower'][0]} <> all (followers)"
+        insert_book_command = f"INSERT INTO books(title, price, link, link_image, followers) " \
+            f"SELECT '{info['title']}', {info['price']}, '{info['link']}'," \
+            f" '{info['image_link']}', ARRAY{follower} " \
+            f"where not exists(SELECT link FROM books WHERE link = '{info['link']}')"
+        self.cursor.execute(insert_book_command)
+        self.cursor.execute(append_follower_command)
 
-            self.cursor.execute(add_follower_command)
+    def insert_follower(self, link: list, call: CallbackQuery):
+        insert_follower_command = f"INSERT INTO followers(chat_id, subscriptions) " \
+            f"SELECT {call.message.chat.id}," \
+            f"ARRAY{link} " \
+            f"where not exists(SELECT chat_id FROM followers WHERE chat_id = '{call.message.chat.id}')"
 
-            insert_book_command = f"INSERT INTO books(title, price, link, link_image, followers) " \
-                f"SELECT '{info['title']}', {info['price']}, '{info['link']}'," \
-                f" '{info['image_link']}', ARRAY{info['follower']} " \
-                f"where not exists(SELECT link FROM books WHERE link = '{info['link']}')"
+        append_book = f"UPDATE followers SET subscriptions = array_append(subscriptions, '{link[0]}')" \
+            f" WHERE chat_id = '{call.message.chat.id}' " \
+            f"and '{link[0]}' <> all (subscriptions)"
 
-            self.cursor.execute(insert_book_command)
-        except KeyError:
-            return False
+        self.cursor.execute(insert_follower_command)
+        self.cursor.execute(append_book)
 
     def __del__(self):
         self.cursor.close()

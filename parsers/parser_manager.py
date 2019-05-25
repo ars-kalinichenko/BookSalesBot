@@ -10,14 +10,14 @@ def add_book(url: str):
         lab = labirint.Labirint()
         lab.parsing(url)
         detail_book = lab.detail_book
-        save_photo(detail_book["image_link"], detail_book["image_name"])
-        return lab.detail_book
+        save_photo(detail_book)
+        return detail_book
 
     elif 'https://www.chitai-gorod.ru/catalog/book/' in url:
         ch_gorod = chitai_gorod.ChitaiGorod()
         ch_gorod.parsing(url)
         detail_book = ch_gorod.detail_book
-        save_photo(detail_book["image_link"], detail_book["image_name"])
+        save_photo(detail_book)
         return detail_book
 
 
@@ -26,10 +26,12 @@ def check_book():
     sleep(2 ** 11)
 
 
-def save_photo(url, name_image):
+def save_photo(book: dict):
     if not os.path.exists("images"):
         os.mkdir("images")
 
-    if not os.path.isfile(f'images/{name_image}'):
-        with open(f'images/{name_image}', 'wb') as image:
-            image.write(urequest.urlopen(url).read())
+    image_name = f"images/{book['price']}{book['image_name']}"
+
+    if not os.path.isfile(image_name):
+        with open(image_name, 'wb') as image:
+            image.write(urequest.urlopen(book['image_link']).read())
