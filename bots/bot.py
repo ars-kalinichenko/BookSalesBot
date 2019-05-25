@@ -33,8 +33,8 @@ class Bot:
                                    "Чтобы добавить книгу, напиши:\n`добавить [ссылка на книгу]`")
         logger.show_msg(message)
 
-    def show_list(self):
-        pass
+    def show_list(self, message: Message):
+        self.typing(3, message)
 
     def show_help(self, message: Message):
         self.typing(1, message)
