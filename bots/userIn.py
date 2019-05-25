@@ -7,12 +7,32 @@ bot = bot_action.bot
 
 
 @bot.message_handler(commands=['start'])
-def welcome(message: Message):
+def start(message: Message):
     bot_action.welcome(message)
 
 
+@bot.message_handler(commands=['list'])
+def listing():
+    bot_action.show_list()
+
+
+@bot.message_handler(commands=['help'])
+def support(message: Message):
+    bot_action.show_help(message)
+
+
+@bot.message_handler(commands=['about'])
+def about(message: Message):
+    bot_action.show_about(message)
+
+
+@bot.message_handler(commands=['stop'])
+def stop(message: Message):
+    bot_action.stop_user(message)
+
+
 @bot.message_handler(content_types=['text'])
-def reply(message: Message):
+def small_talk(message: Message):
     if "добавить" in message.text.lower():
         bot_action.adding_book(message)
     else:

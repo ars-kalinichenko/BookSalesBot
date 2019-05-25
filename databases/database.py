@@ -15,6 +15,16 @@ class Database:
         self.connection.autocommit = True
         self.cursor = self.connection.cursor()
 
+    def start_following(self, chat_id: int):
+        start_command = f"UPDATE followers SET service = true " \
+            f"WHERE chat_id = '{chat_id}'"
+        self.cursor.execute(start_command)
+
+    def stop_following(self, chat_id: int):
+        stop_command = f"UPDATE followers SET service = false " \
+            f"WHERE chat_id = '{chat_id}'"
+        self.cursor.execute(stop_command)
+
     def insert_book(self, info: dict, follower: list):
         append_follower_command = f"UPDATE books SET followers = array_append(followers, {follower[0]})" \
             f" WHERE link = '{info['link']}' " \
@@ -24,6 +34,7 @@ class Database:
             f"SELECT '{info['title']}', {info['price']}, '{info['link']}'," \
             f" '{info['image_link']}', ARRAY{follower} " \
             f"where not exists(SELECT link FROM books WHERE link = '{info['link']}')"
+
         self.cursor.execute(insert_book_command)
         self.cursor.execute(append_follower_command)
 

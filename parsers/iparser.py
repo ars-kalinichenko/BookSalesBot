@@ -12,13 +12,17 @@ class IParser(ABC):
         self.html = requests.get(self.url_from).text
 
     @abstractmethod
-    def get_price(self, html):
+    def get_price(self, html: str) -> int:
         pass
 
     @abstractmethod
-    def get_title(self, html):
+    def get_title(self, html: str) -> str:
         pass
 
     @abstractmethod
-    def get_image_link(self, html):
+    def get_image_link(self, html: str) -> str:
+        pass
+
+    @abstractmethod
+    def get_image_name(self, image_link: str) -> str:
         pass

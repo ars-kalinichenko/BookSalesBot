@@ -22,13 +22,40 @@ class Bot:
         time.sleep(secs)
 
     def welcome(self, message: Message):
+        database = Database()
+        database.start_following(message.chat.id)
         self.typing(1, message)
-        self.bot.send_message(
-            text="Привет, я помогу тебе отслеживать скидки на книги!\n"
-                 "Чтобы добавить книгу, напиши:\n`добавить [ссылка на книгу]`",
-
-            chat_id=message.from_user.id, parse_mode='Markdown')
+        self.bot.send_message(chat_id=message.from_user.id, parse_mode='Markdown',
+                              text="Привет, я помогу тебе отслеживать скидки на книги!\n"
+                                   "Чтобы добавить книгу, напиши:\n`добавить [ссылка на книгу]`")
         logger.show_msg(message)
+
+    def show_list(self):
+        pass
+
+    def show_help(self, message: Message):
+        self.typing(1, message)
+        self.bot.send_message(chat_id=message.chat.id,
+                              text="Я, как чистокровный робот, помогу тебе не сойти с ума в мире книжных скидок 🤖\n"
+                                   "*нет, я не уничтожу мир 🙄*\n\n"
+                                   "Если ты хочешь включить активный режим, то добавь новую книгу или отправь /start\n"
+                                   "Если же ты хочешь выключить активный режим и впредь не получать сообщений, "
+                                   "отправь /stop\n"
+                                   "Хочешь посмотреть свои подписки или удалить книгу? Нажимай /list\n"
+                                   "Хочешь посмотреть на код или кинуть донат? Тебе сюда /about")
+
+    def show_about(self, message: Message):
+        self.typing(1, message)
+        self.bot.send_message(chat_id=message.chat.id, parse_mode='Markdown',
+                              text="`Я являюсь небольшим пет-проектом для трекинга скидок 🤖\n"
+                                   "Хотите увидеть внутренности?\nВаша воля, господин!`\n"
+                                   "https://github.com/ars-kalinichenko/BookSalesBot")
+
+    def stop_user(self, message: Message):
+        database = Database()
+        database.stop_following(message.chat.id)
+        self.typing(1, message)
+        self.bot.send_message(chat_id=message.chat.id, text="Прощайте. Надеемся, вы вернётесь 😌")
 
     def small_talk(self, message: Message):
         request = apiai.ApiAI(os.environ.get("smalltalk")).text_request()
@@ -45,10 +72,10 @@ class Bot:
         markup.add(InlineKeyboardButton(text="Да", callback_data="add_url"))
         markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_url"))
 
-        url = message.text.split(' ')[-1]
-        self.book = parser_manager.add_book(url)
-
         try:
+            url = message.text.split(' ')[-1]
+            self.book = parser_manager.add_book(url)
+
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
             self.typing(1, message)
             photo_path = f"images/{self.book['price']}{self.book['image_name']}"
@@ -64,7 +91,6 @@ class Bot:
     def book_to_db(self, call):
         if call.data == 'add_url':
             database = Database()
-
             try:
                 database.insert_book(self.book, [call.message.chat.id])
                 database.insert_follower([self.book['link']], call)
@@ -74,6 +100,7 @@ class Bot:
                 logger.show_error(system="Bot.book_to_db()", error=repr(er))
             else:
                 self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список ✅')
+                database.start_following(call.message.chat.id)
 
         elif call.data == 'no_add_url':
             self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр!')
