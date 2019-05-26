@@ -12,8 +12,8 @@ def start(message: Message):
 
 
 @bot.message_handler(commands=['list'])
-def listing():
-    bot_action.show_list()
+def listing(message: Message):
+    bot_action.show_list(message)
 
 
 @bot.message_handler(commands=['help'])

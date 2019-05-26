@@ -24,5 +24,5 @@ class IParser(ABC):
         pass
 
     @abstractmethod
-    def get_image_name(self, image_link: str) -> str:
+    def get_image_name(self, image_link, price: str) -> str:
         pass

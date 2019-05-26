@@ -14,15 +14,18 @@ from parsers import parser_manager
 
 class Bot:
     def __init__(self):
-        self.queue_book = {}
         self.bot = telebot.TeleBot(os.environ.get("token"))
+
+        self.queue_book = {}
         self.book = {}
 
     def typing(self, secs, message: Message):
         self.bot.send_chat_action(message.chat.id, "typing")
         time.sleep(secs)
 
-    # TODO: sending photo
+    def uploading_photo(self, secs, message: Message):
+        self.bot.send_chat_action(message.chat.id, "upload_photo")
+        time.sleep(secs)
 
     def welcome(self, message: Message):
         database = Database()
@@ -37,7 +40,7 @@ class Bot:
         self.typing(3, message)
 
     def show_help(self, message: Message):
-        self.typing(1, message)
+        self.typing(2, message)
         self.bot.send_message(chat_id=message.chat.id,
                               text="Я, как чистокровный робот, помогу тебе не сойти с ума в мире книжных скидок 🤖\n"
                                    "*нет, я не уничтожу мир 🙄*\n\n"
@@ -79,28 +82,29 @@ class Bot:
             url = message.text.split(' ')[-1]
             self.book = parser_manager.add_book(url)
 
-            self.queue_book[message.chat.id] = self.book.copy()
+            self.uploading_photo(0.5, message)
 
+            self.queue_book[message.chat.id] = self.book.copy()
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
-            self.typing(1, message)
 
             self.bot.send_photo(message.chat.id,
                                 photo=open(f"images/{self.book['image_name']}", 'rb'),
                                 caption='Вы уверены, что хотите добавить:\n'
                                 f'"{self.book["title"]}" за {self.book["price"]} {case_rub}?',
                                 reply_markup=markup)
+
         except TypeError:
             self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
 
         logger.show_msg(message)
 
     def book_to_db(self, call):
+
         if call.data == 'add_url':
             database = Database()
 
-            book_ = self.queue_book[call.message.chat.id]
-
             try:
+                book_ = self.queue_book[call.message.chat.id]
                 database.insert_book(book_, [call.message.chat.id])
                 database.insert_follower([book_['link']], call)
             except KeyError as er:
@@ -117,4 +121,7 @@ class Bot:
         self.bot.edit_message_reply_markup(chat_id=call.message.chat.id,
                                            message_id=call.message.message_id)
 
-        self.queue_book.pop(call.message.chat.id)
+        try:
+            self.queue_book.pop(call.message.chat.id)
+        except KeyError:
+            pass
