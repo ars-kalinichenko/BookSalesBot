@@ -5,6 +5,10 @@ import logger
 from parsers import labirint, chitai_gorod
 
 
+def shorten_link(url):
+    return url.split('/?')[0]
+
+
 def add_book(url: str):
     try:
         if 'https://www.labirint.ru/books/' in url:
@@ -16,7 +20,8 @@ def add_book(url: str):
 
         elif 'https://www.chitai-gorod.ru/catalog/book/' in url:
             ch_gorod = chitai_gorod.ChitaiGorod()
-            ch_gorod.parsing(url)
+
+            ch_gorod.parsing(shorten_link(url))
             detail_book = ch_gorod.detail_book
             save_photo(detail_book)
             return detail_book
