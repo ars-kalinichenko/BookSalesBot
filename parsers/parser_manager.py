@@ -1,5 +1,4 @@
 import os.path
-from time import sleep
 from urllib import request as urequest
 
 import logger
@@ -21,14 +20,14 @@ def add_book(url: str):
             detail_book = ch_gorod.detail_book
             save_photo(detail_book)
             return detail_book
+
     except AttributeError as ae:
         logger.show_error(system="parser_manager", error=repr(ae))
         raise AttributeError
 
 
 def check_book():
-    # some code
-    sleep(10800)
+    pass
 
 
 def save_photo(book: dict):

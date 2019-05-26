@@ -1,5 +1,3 @@
-import time
-
 from bs4 import BeautifulSoup
 
 import logger
@@ -46,7 +44,8 @@ class Labirint(IParser):
             self.detail_book['title'] = self.get_title(self.html)
             self.detail_book['price'] = self.get_price(self.html)
             self.detail_book['image_link'] = self.get_image_link(self.html)
-            self.detail_book['image_name'] = self.get_image_name(self.detail_book['image_link'], self.detail_book['price'])
+            self.detail_book['image_name'] = self.get_image_name(self.detail_book['image_link'],
+                                                                 self.detail_book['price'])
         except AttributeError as ae:
             logger.show_error(system="Labirint", error=repr(ae))
             raise AttributeError

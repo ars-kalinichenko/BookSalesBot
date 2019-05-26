@@ -44,4 +44,6 @@ def query_handler(call):
     bot_action.book_to_db(call)
 
 
-bot.polling()
+def main():
+    bot.polling()
+
