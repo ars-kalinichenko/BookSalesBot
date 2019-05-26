@@ -80,7 +80,7 @@ class Bot:
         markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_url"))
 
         try:
-            url = message.text.lower().split('добавить')[-1]
+            url = message.text.lower().split('добавить')[-1].strip()
             self.book = parser_manager.add_book(url)
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
 

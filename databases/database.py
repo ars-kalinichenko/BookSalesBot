@@ -1,6 +1,8 @@
+import os
+
 import psycopg2
 from telebot.types import CallbackQuery
-import os
+
 
 class Database:
     def __init__(self):
