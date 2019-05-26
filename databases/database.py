@@ -42,6 +42,27 @@ class Database:
             'WHERE chat_id = %s and %s <> all (subscriptions)',
             (link[0], call.message.chat.id, link[0]))
 
+    def get_subscriptions(self, chat_id: int) -> list:
+        self.cursor.execute('SELECT subscriptions FROM followers WHERE chat_id = %s', (chat_id,))
+        try:
+            return self.cursor.fetchone()['subscriptions']
+        except TypeError:
+            return [None]
+
+    def get_books(self) -> dict:
+        books = {}
+        self.cursor.execute('SELECT * FROM books')
+        for row in self.cursor:
+            books[row['link']] = row['followers']
+        return books
+
+    def check_service(self, chat_id: int) -> bool:
+        self.cursor.execute('SELECT service FROM followers WHERE chat_id = %s', (chat_id,))
+        try:
+            return self.cursor.fetchone()['service']
+        except TypeError:
+            return False
+
     def __del__(self):
         self.cursor.close()
         self.connection.close()
