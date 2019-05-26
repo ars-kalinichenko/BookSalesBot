@@ -28,7 +28,7 @@ def add_book(url: str):
 
 def check_book():
     # some code
-    sleep(2 ** 11)
+    sleep(10800)
 
 
 def save_photo(book: dict):
