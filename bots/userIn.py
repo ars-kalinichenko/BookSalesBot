@@ -8,7 +8,7 @@ bot = bot_action.bot
 
 @bot.message_handler(commands=['start'])
 def start(message: Message):
-    bot_action.welcome(message)
+    bot_action.start_user(message)
 
 
 @bot.message_handler(commands=['list'])

@@ -2,23 +2,28 @@ import os.path
 from time import sleep
 from urllib import request as urequest
 
+import logger
 from parsers import labirint, chitai_gorod
 
 
 def add_book(url: str):
-    if 'https://www.labirint.ru/books/' in url:
-        lab = labirint.Labirint()
-        lab.parsing(url)
-        detail_book = lab.detail_book
-        save_photo(detail_book)
-        return detail_book
+    try:
+        if 'https://www.labirint.ru/books/' in url:
+            lab = labirint.Labirint()
+            lab.parsing(url)
+            detail_book = lab.detail_book
+            save_photo(detail_book)
+            return detail_book
 
-    elif 'https://www.chitai-gorod.ru/catalog/book/' in url:
-        ch_gorod = chitai_gorod.ChitaiGorod()
-        ch_gorod.parsing(url)
-        detail_book = ch_gorod.detail_book
-        save_photo(detail_book)
-        return detail_book
+        elif 'https://www.chitai-gorod.ru/catalog/book/' in url:
+            ch_gorod = chitai_gorod.ChitaiGorod()
+            ch_gorod.parsing(url)
+            detail_book = ch_gorod.detail_book
+            save_photo(detail_book)
+            return detail_book
+    except AttributeError as ae:
+        logger.show_error(system="parser_manager", error=repr(ae))
+        raise AttributeError
 
 
 def check_book():

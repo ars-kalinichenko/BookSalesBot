@@ -27,7 +27,7 @@ class Bot:
         self.bot.send_chat_action(message.chat.id, "upload_photo")
         time.sleep(secs)
 
-    def welcome(self, message: Message):
+    def start_user(self, message: Message):
         database = Database()
         database.start_following(message.chat.id)
         self.typing(1, message)
@@ -70,6 +70,7 @@ class Bot:
         response_json = json.loads(request.getresponse().read().decode('utf-8'))
         response = response_json['result']['fulfillment']['speech']
         self.typing(1, message)
+
         logger.show_msg(message)
         logger.show_msg(self.bot.send_message(chat_id=message.from_user.id, text=response))
 
@@ -79,21 +80,20 @@ class Bot:
         markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_url"))
 
         try:
-            url = message.text.split(' ')[-1]
+            url = message.text.lower().split('добавить')[-1]
             self.book = parser_manager.add_book(url)
-
-            self.uploading_photo(0.5, message)
-
-            self.queue_book[message.chat.id] = self.book.copy()
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
 
-            self.bot.send_photo(message.chat.id,
-                                photo=open(f"images/{self.book['image_name']}", 'rb'),
-                                caption='Вы уверены, что хотите добавить:\n'
-                                f'"{self.book["title"]}" за {self.book["price"]} {case_rub}?',
-                                reply_markup=markup)
+            self.uploading_photo(0.5, message)
+            reply_msg: Message = self.bot.send_photo(message.chat.id,
+                                                     photo=open(f"images/{self.book['image_name']}", 'rb'),
+                                                     caption='Вы уверены, что хотите добавить:\n'
+                                                     f'"{self.book["title"]}" за {self.book["price"]} {case_rub}?',
+                                                     reply_markup=markup)
 
-        except TypeError:
+            self.queue_book[reply_msg.message_id] = self.book.copy()
+
+        except (TypeError, AttributeError):
             self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
 
         logger.show_msg(message)
@@ -102,9 +102,8 @@ class Bot:
 
         if call.data == 'add_url':
             database = Database()
-
             try:
-                book_ = self.queue_book[call.message.chat.id]
+                book_ = self.queue_book[call.message.message_id]
                 database.insert_book(book_, [call.message.chat.id])
                 database.insert_follower([book_['link']], call)
             except KeyError as er:
@@ -116,12 +115,11 @@ class Bot:
                 database.start_following(call.message.chat.id)
 
         elif call.data == 'no_add_url':
-            self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр!')
-
-        self.bot.edit_message_reply_markup(chat_id=call.message.chat.id,
-                                           message_id=call.message.message_id)
+            self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр 👨🏼‍✈️')
 
         try:
-            self.queue_book.pop(call.message.chat.id)
-        except KeyError:
+            self.bot.edit_message_reply_markup(chat_id=call.message.chat.id,
+                                               message_id=call.message.message_id)
+            self.queue_book.pop(call.message.message_id)
+        except:
             pass
