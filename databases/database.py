@@ -2,6 +2,7 @@ import os
 
 import psycopg2
 from telebot.types import CallbackQuery
+from psycopg2.extras import DictCursor
 
 
 class Database:
@@ -13,7 +14,7 @@ class Database:
                   host={os.environ.get('dbhost')} \
                   port={os.environ.get('dbport')}")
         self.connection.autocommit = True
-        self.cursor = self.connection.cursor()
+        self.cursor = self.connection.cursor(cursor_factory=DictCursor)
 
     def start_following(self, chat_id: int):
         self.cursor.execute('UPDATE followers SET service = true WHERE chat_id = %s', (chat_id,))
@@ -49,11 +50,16 @@ class Database:
         except TypeError:
             return [None]
 
-    def get_books(self) -> dict:
-        books_ = {}
-        self.cursor.execute('SELECT link, followers FROM books')
+    def get_books(self) -> list:
+        books_ = []
+        self.cursor.execute('SELECT * FROM books')
         for row in self.cursor:
-            books_[row['link']] = row['followers']
+            books_.append({'id': row['id'],
+                          'title': row['title'],
+                          'price': row['price'],
+                          'link': row['link'],
+                          'link_image': row['link_image'],
+                          'followers': row['followers']})
         return books_
 
     def check_service(self, chat_id: int) -> bool:

@@ -81,7 +81,7 @@ class Bot:
 
         try:
             link = message.text.lower().split('добавить')[-1].strip()
-            self.book = parser_manager.add_book(link)
+            self.book = parser_manager.parsing_book(link)
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
 
             self.uploading_photo(0.5, message)
@@ -123,3 +123,6 @@ class Bot:
             self.queue_book.pop(call.message.message_id)
         except:
             pass
+
+    def send_notification(self, chat_id: int, book: dict, sale: int):
+        self.bot.send_message(chat_id, text=f'Книга "{book["title"]}" стала стоить на {sale} % дешевле.')

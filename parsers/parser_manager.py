@@ -1,8 +1,9 @@
 import os.path
-
+import time
 from urllib import request as urequest
-
+from bots import bot
 import logger
+from databases.database import Database
 from parsers import labirint, chitai_gorod
 
 
@@ -10,7 +11,7 @@ def shorten_link(link):
     return link.split('/?')[0]
 
 
-def add_book(link: str):
+def parsing_book(link: str):
     try:
         if 'https://www.labirint.ru/books/' in link:
             lab = labirint.Labirint()
@@ -33,7 +34,24 @@ def add_book(link: str):
 
 
 def check_book():
-    pass
+    bot_ = bot.Bot()
+    while True:
+        db = Database()
+        books = db.get_books()
+        for book in books:
+            detail = parsing_book(book['link'])
+            if detail['price'] != book['price']:
+
+                db.change_price(book['link'], detail['price'])
+                if detail['price'] < book['price']:
+                    sale = 100 - int(detail['price'] / book['price'] * 100)
+                    for follower in book['followers']:
+                        if db.check_service(follower):
+                            save_photo(detail)
+                            bot_.send_notification(follower, book, sale)
+
+        db.__del__()
+        time.sleep(3000)
 
 
 def save_photo(book: dict):

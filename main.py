@@ -1,5 +1,4 @@
 import threading
-import time
 
 from bots import userIn
 from parsers import parser_manager
@@ -11,9 +10,7 @@ def chatting():
 
 
 def parsing():
-    while True:
-        parser_manager.check_book()
-        time.sleep(11080)
+    parser_manager.check_book()
 
 
 def main():
