@@ -50,11 +50,11 @@ class Database:
             return [None]
 
     def get_books(self) -> dict:
-        books = {}
-        self.cursor.execute('SELECT * FROM books')
+        books_ = {}
+        self.cursor.execute('SELECT link, followers FROM books')
         for row in self.cursor:
-            books[row['link']] = row['followers']
-        return books
+            books_[row['link']] = row['followers']
+        return books_
 
     def check_service(self, chat_id: int) -> bool:
         self.cursor.execute('SELECT service FROM followers WHERE chat_id = %s', (chat_id,))
