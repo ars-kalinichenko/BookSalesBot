@@ -44,4 +44,4 @@ def save_photo(book: dict):
 
     if not os.path.isfile(image_name):
         with open(image_name, 'wb') as image:
-            image.write(urequest.linkopen(book['image_link']).read())
+            image.write(urequest.urlopen(book['image_link']).read())
