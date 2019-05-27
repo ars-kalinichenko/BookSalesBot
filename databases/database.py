@@ -63,6 +63,11 @@ class Database:
         except TypeError:
             return False
 
+    def change_price(self, link: str, price: int):
+        self.cursor.execute(
+            'UPDATE books SET price = %s WHERE link = %s',
+            (price, link))
+
     def __del__(self):
         self.cursor.close()
         self.connection.close()

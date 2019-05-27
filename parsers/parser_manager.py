@@ -1,27 +1,28 @@
 import os.path
+
 from urllib import request as urequest
 
 import logger
 from parsers import labirint, chitai_gorod
 
 
-def shorten_link(url):
-    return url.split('/?')[0]
+def shorten_link(link):
+    return link.split('/?')[0]
 
 
-def add_book(url: str):
+def add_book(link: str):
     try:
-        if 'https://www.labirint.ru/books/' in url:
+        if 'https://www.labirint.ru/books/' in link:
             lab = labirint.Labirint()
-            lab.parsing(url)
+            lab.parsing(link)
             detail_book = lab.detail_book
             save_photo(detail_book)
             return detail_book
 
-        elif 'https://www.chitai-gorod.ru/catalog/book/' in url:
+        elif 'https://www.chitai-gorod.ru/catalog/book/' in link:
             ch_gorod = chitai_gorod.ChitaiGorod()
 
-            ch_gorod.parsing(shorten_link(url))
+            ch_gorod.parsing(shorten_link(link))
             detail_book = ch_gorod.detail_book
             save_photo(detail_book)
             return detail_book
@@ -43,4 +44,4 @@ def save_photo(book: dict):
 
     if not os.path.isfile(image_name):
         with open(image_name, 'wb') as image:
-            image.write(urequest.urlopen(book['image_link']).read())
+            image.write(urequest.linkopen(book['image_link']).read())

@@ -76,12 +76,12 @@ class Bot:
 
     def adding_book(self, message: Message):
         markup = InlineKeyboardMarkup()
-        markup.add(InlineKeyboardButton(text="Да", callback_data="add_url"))
-        markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_url"))
+        markup.add(InlineKeyboardButton(text="Да", callback_data="add_link"))
+        markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_link"))
 
         try:
-            url = message.text.lower().split('добавить')[-1].strip()
-            self.book = parser_manager.add_book(url)
+            link = message.text.lower().split('добавить')[-1].strip()
+            self.book = parser_manager.add_book(link)
             case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
 
             self.uploading_photo(0.5, message)
@@ -100,7 +100,7 @@ class Bot:
 
     def book_to_db(self, call):
 
-        if call.data == 'add_url':
+        if call.data == 'add_link':
             database = Database()
             try:
                 book_ = self.queue_book[call.message.message_id]
@@ -114,7 +114,7 @@ class Bot:
                 self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список ✅')
                 database.start_following(call.message.chat.id)
 
-        elif call.data == 'no_add_url':
+        elif call.data == 'no_add_link':
             self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр 👨🏼‍✈️')
 
         try:

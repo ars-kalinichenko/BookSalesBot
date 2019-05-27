@@ -4,12 +4,12 @@ import requests
 
 
 class IParser(ABC):
-    url_from = None
+    link_from = None
     html = None
 
-    def get_html(self, url):
-        self.url_from = url
-        self.html = requests.get(self.url_from).text
+    def get_html(self, link):
+        self.link_from = link
+        self.html = requests.get(self.link_from).text
 
     @abstractmethod
     def get_price(self, html: str) -> int:

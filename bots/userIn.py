@@ -46,4 +46,3 @@ def query_handler(call):
 
 def main():
     bot.polling()
-

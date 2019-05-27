@@ -37,10 +37,10 @@ class Labirint(IParser):
         id_book = image_link.split('/')[4]
         return f"{price}{id_book}.{im_extension}"
 
-    def parsing(self, url):
-        self.get_html(url)
+    def parsing(self, link):
+        self.get_html(link)
         try:
-            self.detail_book['link'] = url
+            self.detail_book['link'] = link
             self.detail_book['title'] = self.get_title(self.html)
             self.detail_book['price'] = self.get_price(self.html)
             self.detail_book['image_link'] = self.get_image_link(self.html)
