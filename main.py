@@ -1,8 +1,8 @@
 from multiprocessing import Process
 from threading import Thread
 
+import checker_book
 from bots import userIn
-from parsers import parser_manager
 
 
 def chatting():
@@ -11,8 +11,8 @@ def chatting():
 
 
 def parsing():
-    parser = parser_manager.ParserManager()
-    parser.check_book()
+    checker = checker_book.CheckerBook()
+    checker.check_book()
 
 
 def main():

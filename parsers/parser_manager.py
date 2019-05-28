@@ -1,10 +1,7 @@
 import os.path
-import time
 from urllib import request as urequest
 
 import logger
-from bots import bot
-from databases.database import Database
 from parsers import labirint, chitai_gorod
 
 
@@ -34,28 +31,6 @@ class ParserManager:
         except AttributeError as ae:
             logger.show_error(system="parser_manager", error=repr(ae))
             raise AttributeError
-
-    def check_book(self):
-        bot_ = bot.Bot()
-        while True:
-            database = Database()
-            books = database.get_books()
-
-            for book in books:
-                book_detail = self.parsing_book(book['link'])
-
-                if book_detail['price'] != book['price']:
-                    database.change_price(book['link'], book_detail['price'])
-
-                    if book_detail['price'] < book['price']:
-                        sale = 100 - int(book_detail['price'] / book['price'] * 100)
-                        for follower in book['followers']:
-                            if database.check_service(follower):
-                                self.save_photo(book_detail)
-                                bot_.send_notification(follower, book_detail, sale)
-
-            database.__del__()
-            time.sleep(7200)
 
     @staticmethod
     def save_photo(book: dict):
