@@ -9,7 +9,7 @@ from telebot.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 import detail
 import logger
 from databases.database import Database
-from parsers import parser_manager
+from parsers.parser_manager import ParserManager
 
 
 class Bot:
@@ -36,7 +36,13 @@ class Bot:
         logger.show_msg(message)
 
     def show_list(self, message: Message):
-        self.typing(3, message)
+        database = Database()
+        parser = ParserManager()
+        for subscription in database.get_subscriptions(message.chat.id):
+            detail_book = parser.parsing_book(subscription)
+            self.uploading_photo(0.3, message)
+            self.bot.send_photo(chat_id=message.chat.id, photo=open(f"images/{detail_book['image_name']}", 'rb'),
+                                caption=f"{detail_book['title']} ({detail_book['price']}р.)")
 
     def show_help(self, message: Message):
         self.typing(2, message)
@@ -77,7 +83,7 @@ class Bot:
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(text="Да", callback_data="add_link"))
         markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_link"))
-        parser = parser_manager.ParserManager()
+        parser = ParserManager()
 
         try:
             link = message.text.lower().split('добавить')[-1].strip()

@@ -1,5 +1,3 @@
-from bs4 import BeautifulSoup
-
 import logger
 from parsers.iparser import IParser
 
@@ -8,21 +6,18 @@ class ChitaiGorod(IParser):
     """Parser for Chitai_Gorod.ru"""
     detail_book = {}
 
-    def get_price(self, html):
-        soup = BeautifulSoup(html, 'html.parser')
+    def get_price(self, soup):
         prices = soup.select('div.product__price')
         prices = prices[0].get_text()
         return [int(s) for s in prices.split() if s.isdigit()][0]
 
-    def get_title(self, html):
-        soup = BeautifulSoup(html, 'html.parser')
+    def get_title(self, soup):
         title = soup.find(class_='product__header')
         title = title.find_all('h1')
         title = title[0].get_text()
         return title.strip()
 
-    def get_image_link(self, html):
-        soup = BeautifulSoup(html, 'html.parser')
+    def get_image_link(self, soup):
         img = soup.select("div.product__image img[src]")
         return img[0]["src"]
 
@@ -32,12 +27,12 @@ class ChitaiGorod(IParser):
         return f"{price}{id_book}.{im_extension}"
 
     def parsing(self, link):
-        self.get_html(link)
+        soup = self.get_soup(link)
         try:
             self.detail_book['link'] = link
-            self.detail_book['title'] = self.get_title(self.html)
-            self.detail_book['price'] = self.get_price(self.html)
-            self.detail_book['image_link'] = self.get_image_link(self.html)
+            self.detail_book['title'] = self.get_title(soup)
+            self.detail_book['price'] = self.get_price(soup)
+            self.detail_book['image_link'] = self.get_image_link(soup)
             self.detail_book['image_name'] = self.get_image_name(self.detail_book['image_link'],
                                                                  self.detail_book['price'])
         except AttributeError as ae:

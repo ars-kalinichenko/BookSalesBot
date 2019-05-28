@@ -1,15 +1,14 @@
 from abc import ABC, abstractmethod
 
 import requests
+from bs4 import BeautifulSoup
 
 
 class IParser(ABC):
-    link_from = None
-    html = None
 
-    def get_html(self, link):
-        self.link_from = link
-        self.html = requests.get(self.link_from).text
+    def get_soup(self, link) -> BeautifulSoup:
+        html = requests.get(link).text
+        return BeautifulSoup(html, 'html.parser')
 
     @abstractmethod
     def get_price(self, html: str) -> int:
