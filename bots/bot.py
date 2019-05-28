@@ -17,7 +17,6 @@ class Bot:
         self.bot = telebot.TeleBot(os.environ.get("token"))
 
         self.queue_book = {}
-        self.book = {}
 
     def typing(self, secs, message: Message):
         self.bot.send_chat_action(message.chat.id, "typing")
@@ -61,7 +60,7 @@ class Bot:
         database = Database()
         database.stop_following(message.chat.id)
         self.typing(1, message)
-        self.bot.send_message(chat_id=message.chat.id, text="Прощайте. Надеемся, вы вернётесь 😌")
+        self.bot.send_message(chat_id=message.chat.id, text="Прощайте.\nНадеемся, вы вернётесь 😌")
 
     def small_talk(self, message: Message):
         request = apiai.ApiAI(os.environ.get("smalltalk")).text_request()
@@ -78,20 +77,21 @@ class Bot:
         markup = InlineKeyboardMarkup()
         markup.add(InlineKeyboardButton(text="Да", callback_data="add_link"))
         markup.add(InlineKeyboardButton(text="Нет", callback_data="no_add_link"))
+        parser = parser_manager.ParserManager()
 
         try:
             link = message.text.lower().split('добавить')[-1].strip()
-            self.book = parser_manager.parsing_book(link)
-            case_rub = f'рубл{detail.ruble_cases[self.book["price"] % 100]}'
+            book__ = parser.parsing_book(link)
+            case_rub = f'рубл{detail.ruble_cases[book__["price"] % 100]}'
 
             self.uploading_photo(0.5, message)
             reply_msg: Message = self.bot.send_photo(message.chat.id,
-                                                     photo=open(f"images/{self.book['image_name']}", 'rb'),
+                                                     photo=open(f"images/{book__['image_name']}", 'rb'),
                                                      caption='Вы уверены, что хотите добавить:\n'
-                                                     f'"{self.book["title"]}" за {self.book["price"]} {case_rub}?',
+                                                     f'"{book__["title"]}" за {book__["price"]} {case_rub}?',
                                                      reply_markup=markup)
 
-            self.queue_book[reply_msg.message_id] = self.book.copy()
+            self.queue_book[reply_msg.message_id] = book__
 
         except (TypeError, AttributeError):
             self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
@@ -124,5 +124,7 @@ class Bot:
         except:
             pass
 
-    def send_notification(self, chat_id: int, book: dict, sale: int):
-        self.bot.send_message(chat_id, text=f'Книга "{book["title"]}" стала стоить на {sale} % дешевле.')
+    def send_notification(self, chat_id: int, book_detail: dict, sale: int):
+        self.bot.send_photo(chat_id, photo=open(f"images/{book_detail['image_name']}", 'rb'),
+                            caption=f'Книга "{book_detail["title"]}"\n'
+                            f'подешевела на {sale}% ({book_detail["price"]}р.)')

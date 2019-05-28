@@ -1,8 +1,8 @@
 import os
 
 import psycopg2
-from telebot.types import CallbackQuery
 from psycopg2.extras import DictCursor
+from telebot.types import CallbackQuery
 
 
 class Database:
@@ -55,11 +55,11 @@ class Database:
         self.cursor.execute('SELECT * FROM books')
         for row in self.cursor:
             books_.append({'id': row['id'],
-                          'title': row['title'],
-                          'price': row['price'],
-                          'link': row['link'],
-                          'link_image': row['link_image'],
-                          'followers': row['followers']})
+                           'title': row['title'],
+                           'price': row['price'],
+                           'link': row['link'],
+                           'link_image': row['link_image'],
+                           'followers': row['followers']})
         return books_
 
     def check_service(self, chat_id: int) -> bool:

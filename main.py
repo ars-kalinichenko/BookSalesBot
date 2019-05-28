@@ -1,4 +1,5 @@
-import threading
+from multiprocessing import Process
+from threading import Thread
 
 from bots import userIn
 from parsers import parser_manager
@@ -10,12 +11,13 @@ def chatting():
 
 
 def parsing():
-    parser_manager.check_book()
+    parser = parser_manager.ParserManager()
+    parser.check_book()
 
 
 def main():
-    my_thread1 = threading.Thread(target=chatting, args=())
-    my_thread2 = threading.Thread(target=parsing, args=())
+    my_thread1 = Thread(target=chatting, args=(), name="Chatting")
+    my_thread2 = Process(target=parsing, args=(), name="Parsing")
 
     my_thread1.start()
     my_thread2.start()
