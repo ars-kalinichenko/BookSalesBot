@@ -74,6 +74,11 @@ class Database:
             'UPDATE books SET price = %s WHERE link = %s',
             (price, link))
 
+    def delete_subscription(self, chat_id: int, link: str):
+        self.cursor.execute("UPDATE books SET followers = array_remove(followers, %s) WHERE link = %s", (chat_id, link))
+        self.cursor.execute("UPDATE followers SET subscriptions = array_remove(subscriptions, %s) WHERE chat_id = %s",
+                            (link, chat_id))
+
     def __del__(self):
         self.cursor.close()
         self.connection.close()

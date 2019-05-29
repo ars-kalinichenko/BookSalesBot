@@ -41,7 +41,7 @@ def small_talk(message: Message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def query_handler(call):
-    bot_action.book_to_db(call)
+    bot_action.callback_handler(call)
 
 
 def main():

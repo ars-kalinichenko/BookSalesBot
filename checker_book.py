@@ -27,4 +27,4 @@ class CheckerBook:
                                 bot_.send_notification(follower, book_detail, sale)
 
             database.__del__()
-            time.sleep(1200)
+            time.sleep(2200)

@@ -18,7 +18,7 @@ class ParserManager:
                 lab.parsing(link)
                 detail_book = lab.detail_book
                 self.save_photo(detail_book)
-                return detail_book
+                return detail_book.copy()
 
             elif 'https://www.chitai-gorod.ru/catalog/book/' in link:
                 ch_gorod = chitai_gorod.ChitaiGorod()
@@ -26,7 +26,7 @@ class ParserManager:
                 ch_gorod.parsing(self.shorten_link(link))
                 detail_book = ch_gorod.detail_book
                 self.save_photo(detail_book)
-                return detail_book
+                return detail_book.copy()
 
         except AttributeError as ae:
             logger.show_error(system="parser_manager", error=repr(ae))

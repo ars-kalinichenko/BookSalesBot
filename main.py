@@ -16,14 +16,14 @@ def parsing():
 
 
 def main():
-    my_thread1 = Thread(target=chatting, args=(), name="Chatting")
-    my_thread2 = Process(target=parsing, args=(), name="Parsing")
+    chat = Thread(target=chatting, args=(), name="Chatting")
+    parse = Process(target=parsing, args=(), name="Parsing")
 
-    my_thread1.start()
-    my_thread2.start()
+    chat.start()
+    parse.start()
 
-    my_thread1.join()
-    my_thread2.join()
+    chat.join()
+    parse.join()
 
 
 if __name__ == '__main__':
