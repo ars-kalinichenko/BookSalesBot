@@ -45,7 +45,7 @@ class Bot:
 
         subscriptions = database.get_subscriptions(message.chat.id)
 
-        if not subscriptions:
+        if subscriptions == [None] or not subscriptions:
             self.typing(0.3, message)
             self.bot.send_message(message.chat.id, "Кажется, ничего нет 🤕")
 
@@ -112,13 +112,14 @@ class Bot:
             case_rub = f'рубл{detail.ruble_cases[book["price"] % 100]}'
 
             self.uploading_photo(0.5, message)
-            reply_msg: Message = self.bot.send_photo(message.chat.id,
-                                                     photo=open(f"images/{book['image_name']}", 'rb'),
-                                                     caption='Вы уверены, что хотите добавить:\n'
-                                                     f'"{book["title"]}" за {book["price"]} {case_rub}?',
-                                                     reply_markup=markup)
+            reply_msg = self.bot.send_photo(message.chat.id,
+                                            photo=open(f"images/{book['image_name']}", 'rb'),
+                                            caption='Вы уверены, что хотите добавить:\n'
+                                            f'"{book["title"]}" за {book["price"]} {case_rub}?',
+                                            reply_markup=markup)
 
             self.book_to_add[reply_msg.message_id] = book
+            logger.show_caption_photo(reply_msg)
 
         except (TypeError, AttributeError):
             self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
@@ -127,7 +128,7 @@ class Bot:
         notification = self.bot.send_photo(chat_id, photo=open(f"images/{book_detail['image_name']}", 'rb'),
                                            caption=f'Книга "{book_detail["title"]}"\n'
                                            f'подешевела на {sale}% ({book_detail["price"]}р.)')
-        logger.show_msg(notification)
+        logger.show_caption_photo(notification)
 
     def callback_handler(self, call):
         if call.data == 'add_link':
@@ -155,9 +156,13 @@ class Bot:
 
     def delete_book(self, call):
         database = Database()
-        link = self.book_to_delete[call.message.message_id]['link']
-        database.delete_subscription(call.message.chat.id, link)
-        self.bot.answer_callback_query(callback_query_id=call.id, text='Книга удалена')
+        try:
+            link = self.book_to_delete[call.message.message_id]['link']
+            database.delete_subscription(call.message.chat.id, link)
+        except KeyError:
+            self.bot.answer_callback_query(callback_query_id=call.id, text='Попробуйте ещё раз 🐙')
+        else:
+            self.bot.answer_callback_query(callback_query_id=call.id, text='Книга удалена 🦄')
 
     def add_book(self, call):
         database = Database()

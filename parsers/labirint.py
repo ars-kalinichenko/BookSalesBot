@@ -27,10 +27,10 @@ class Labirint(IParser):
         img = soup.find("div", {"id": "product-image"})
         return img.select("img[src]")[0]['data-src']
 
-    def get_image_name(self, image_link, price):
+    def get_image_name(self, image_link):
         im_extension = image_link.split(".")[-1]
         id_book = image_link.split('/')[4]
-        return f"{price}{id_book}.{im_extension}"
+        return f"{id_book}.{im_extension}"
 
     def parsing(self, link):
         soup = self.get_soup(link)
@@ -39,8 +39,7 @@ class Labirint(IParser):
             self.detail_book['title'] = self.get_title(soup)
             self.detail_book['price'] = self.get_price(soup)
             self.detail_book['image_link'] = self.get_image_link(soup)
-            self.detail_book['image_name'] = self.get_image_name(self.detail_book['image_link'],
-                                                                 self.detail_book['price'])
+            self.detail_book['image_name'] = self.get_image_name(self.detail_book['image_link'])
         except AttributeError as ae:
             logger.show_error(system="Labirint", error=repr(ae))
             raise AttributeError

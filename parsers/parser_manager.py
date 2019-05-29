@@ -2,7 +2,7 @@ import os.path
 from urllib import request as urequest
 
 import logger
-from parsers import labirint, chitai_gorod
+from parsers import labirint, chitai_gorod, book24
 
 
 class ParserManager:
@@ -22,9 +22,15 @@ class ParserManager:
 
             elif 'https://www.chitai-gorod.ru/catalog/book/' in link:
                 ch_gorod = chitai_gorod.ChitaiGorod()
-
                 ch_gorod.parsing(self.shorten_link(link))
                 detail_book = ch_gorod.detail_book
+                self.save_photo(detail_book)
+                return detail_book.copy()
+
+            elif 'https://book24.ru/product/' in link:
+                book24_ = book24.Book24()
+                book24_.parsing(self.shorten_link(link))
+                detail_book = book24_.detail_book
                 self.save_photo(detail_book)
                 return detail_book.copy()
 
