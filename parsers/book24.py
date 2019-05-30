@@ -7,8 +7,6 @@ class Book24(IParser):
     detail_book = {}
 
     def get_price(self, soup):
-        """This method returns the current book price"""
-
         prices = soup.select('div.item-actions__prices')
         prices = prices[0].get_text()
         return [int(s) for s in prices.split() if s.isdigit()][0]

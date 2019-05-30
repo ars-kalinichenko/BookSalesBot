@@ -4,6 +4,10 @@ from telebot.types import Message
 
 
 def show_msg(message: Message):
+    """
+    Logs the text of the message and its author.
+    If the user does not have a nickname, then author = anonymous.
+    """
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.INFO)
@@ -14,6 +18,11 @@ def show_msg(message: Message):
 
 
 def show_caption_photo(message: Message):
+    """
+    Logs the caption of the photo and the author.
+    If the user does not have a nickname, then author = anonymous.
+    """
+
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.INFO)
@@ -24,6 +33,8 @@ def show_caption_photo(message: Message):
 
 
 def show_error(**kwargs):
+    """Logs the error message and the system where the error occurred."""
+
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         level=logging.INFO)

@@ -6,16 +6,22 @@ from bots import userIn
 
 
 def chatting():
+    """User interaction."""
+
     while True:
         userIn.main()
 
 
 def parsing():
+    """Real-time tracking of discounts."""
+
     checker = checker_book.CheckerBook()
     checker.check_book()
 
 
 def main():
+    """Run these methods in parallel."""
+
     chat = Thread(target=chatting, args=(), name="Chatting")
     parse = Process(target=parsing, args=(), name="Parsing")
 

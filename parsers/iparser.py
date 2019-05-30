@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 
 class IParser(ABC):
 
-    def get_soup(self, link) -> BeautifulSoup:
+    @staticmethod
+    def get_soup(link) -> BeautifulSoup:
         html = requests.get(link).text
         return BeautifulSoup(html, 'html.parser')
 

@@ -8,6 +8,11 @@ from parsers import parser_manager
 class CheckerBook:
     @staticmethod
     def check_book():
+        """
+        This method checks book discounts every 36 minutes.
+        If there is a discount, then it calls the method of notifying subscribers.
+        """
+
         parser = parser_manager.ParserManager()
         bot_ = bot.Bot()
         while True:

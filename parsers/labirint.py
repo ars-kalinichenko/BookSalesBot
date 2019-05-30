@@ -7,8 +7,6 @@ class Labirint(IParser):
     detail_book = {}
 
     def get_price(self, soup):
-        """This method returns the current book price"""
-
         prices = soup.select('div.buying-price')
         if len(prices) == 0:
             prices = soup.select('div.buying-pricenew')

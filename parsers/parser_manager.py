@@ -9,9 +9,21 @@ class ParserManager:
 
     @staticmethod
     def shorten_link(link) -> str:
+        """
+        Shorten the link by '/?'. Applicable to book24 and chitai-gorod.
+        If the link cannot be shortened, then the original is returned.
+        """
+
         return link.split('/?')[0]
 
     def parsing_book(self, link: str) -> dict:
+        """
+        Parse the site and writes data about the book to the dictionary.
+
+        If AttributeError (is an invalid reference), the cause is logged
+         and the exception is passed to a higher level.
+        """
+
         try:
             if 'https://www.labirint.ru/books/' in link:
                 lab = labirint.Labirint()
@@ -40,11 +52,18 @@ class ParserManager:
 
     @staticmethod
     def save_photo(book: dict):
+        """
+        Save the photo by reference and the name of the image from the dictionary
+         with information about the book, if it does not exist.
+
+        If the save folder does not exist, then it is created.
+        """
+
         if not os.path.exists("images"):
             os.mkdir("images")
 
         image_name = f"images/{book['image_name']}"
-
-        if not os.path.isfile(image_name):
-            with open(image_name, 'wb') as image:
-                image.write(urequest.urlopen(book['image_link']).read())
+        if "https://" in book['image_link']:
+            if not os.path.isfile(image_name):
+                with open(image_name, 'wb') as image:
+                    image.write(urequest.urlopen(book['image_link']).read())
