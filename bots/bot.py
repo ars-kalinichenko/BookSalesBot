@@ -159,6 +159,7 @@ class Bot:
             self.book_to_add[reply_msg.message_id] = book
 
         except (TypeError, AttributeError):
+            self.typing(1, message)
             error_msg = self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
             logger.show_msg(error_msg)
 

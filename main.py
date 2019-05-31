@@ -8,8 +8,7 @@ from bots import userIn
 def chatting():
     """User interaction."""
 
-    while True:
-        userIn.main()
+    userIn.main()
 
 
 def parsing():
