@@ -1,8 +1,6 @@
-import json
 import os
 import time
 
-import apiai
 import telebot
 from telebot.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -28,7 +26,9 @@ class Bot:
         time.sleep(secs)
 
     def start_user(self, message: Message):
-        """Send a welcome message to the user and makes his status active."""
+        """
+        Send a welcome message to the user and makes his status active.
+        """
 
         logger.show_msg(message)
         database = Database()
@@ -44,6 +44,7 @@ class Bot:
 
         If the user does not exist or the list is empty,
          then the message that the list is empty is displayed.
+        If the image does not exist, only text is sent.
         """
 
         logger.show_msg(message)
@@ -61,16 +62,25 @@ class Bot:
         else:
             for subscription in database.get_subscriptions(message.chat.id):
                 detail_book = parser.parsing_book(subscription)
+                image_path = f"images/{detail_book['image_name']}"
                 self.uploading_photo(0.2, message)
-                reply_msg = self.bot.send_photo(chat_id=message.chat.id,
-                                                photo=open(f"images/{detail_book['image_name']}", 'rb'),
-                                                caption=f"{detail_book['title']} ({detail_book['price']}р.)",
-                                                reply_markup=markup)
+
+                if os.path.exists(image_path):
+                    reply_msg = self.bot.send_photo(chat_id=message.chat.id,
+                                                    photo=open(f"images/{detail_book['image_name']}", 'rb'),
+                                                    caption=f"{detail_book['title']} ({detail_book['price']}р.)",
+                                                    reply_markup=markup)
+                else:
+                    reply_msg = self.bot.send_message(chat_id=message.chat.id,
+                                                      text=f"{detail_book['title']} ({detail_book['price']}р.)",
+                                                      reply_markup=markup)
 
                 self.book_to_delete[reply_msg.message_id] = detail_book
 
     def show_help(self, message: Message):
-        """Send a message to the user with prompts."""
+        """
+        Send a message to the user with prompts.
+        """
 
         logger.show_msg(message)
         self.typing(2, message)
@@ -84,17 +94,22 @@ class Bot:
                                    "Хочешь посмотреть на код или кинуть донат? Тебе сюда /about")
 
     def show_about(self, message: Message):
-        """Send a message to the user with information about the author."""
+        """
+        Send a message to the user with information about the author.
+        """
 
         logger.show_msg(message)
         self.typing(1, message)
         self.bot.send_message(chat_id=message.chat.id, parse_mode='Markdown',
                               text="`Я являюсь небольшим пет-проектом для трекинга скидок 🤖\n"
-                                   "Хотите увидеть внутренности?\nВаша воля, господин!`\n"
+                                   "Хотите увидеть внутренности?\n"
+                                   "Ваша воля, господин!`\n"
                                    "https://github.com/ars-kalinichenko/BookSalesBot")
 
     def stop_user(self, message: Message):
-        """Make the subscriber inactive."""
+        """
+        Make the subscriber inactive.
+        """
 
         logger.show_msg(message)
         database = Database()
@@ -102,19 +117,6 @@ class Bot:
         self.typing(1, message)
         self.bot.send_message(chat_id=message.chat.id, text="Прощайте.\n"
                                                             "Надеемся, вы вернётесь 😌")
-
-    def small_talk(self, message: Message):
-        """Allow you to communicate with the bot using DialogFlow."""
-
-        logger.show_msg(message)
-        request = apiai.ApiAI(os.environ.get("smalltalk")).text_request()
-        request.lang = 'ru'
-        request.query = message.text
-        response_json = json.loads(request.getresponse().read().decode('utf-8'))
-        response = response_json['result']['fulfillment']['speech']
-        self.typing(1, message)
-
-        logger.show_msg(self.bot.send_message(chat_id=message.from_user.id, text=response))
 
     def adding_book(self, message: Message):
         """
@@ -133,7 +135,7 @@ class Bot:
         parser = ParserManager()
 
         try:
-            link = message.text.lower().split('добавить')[-1].strip()
+            link = message.text.strip()
             book = parser.parsing_book(link)
             image_path = f"images/{book['image_name']}"
             case_rub = f'рубл{detail.ruble_cases[book["price"] % 100]}'
@@ -152,33 +154,30 @@ class Bot:
                                                   text='Вы уверены, что хотите добавить:\n'
                                                   f'"{book["title"]}" за {book["price"]} {case_rub}?',
                                                   reply_markup=markup)
+                logger.show_msg(reply_msg)
             self.book_to_add[reply_msg.message_id] = book
-            logger.show_msg(reply_msg)
 
-        except (TypeError, AttributeError) as error:
-            logger.show_error(system="Bot.adding_book()", error=repr(error))
-            self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
+        except (TypeError, AttributeError):
+            error_msg = self.bot.send_message(message.chat.id, "Введите правильную ссылку!")
+            logger.show_msg(error_msg)
 
     def send_notification(self, chat_id: int, book_detail: dict, sale: int):
-        """Notify the follower of a book discount."""
+        """
+        Notify the follower of a book discount.
+        """
 
-        notification = self.bot.send_photo(chat_id, photo=open(f"images/{book_detail['image_name']}", 'rb'),
+        notification = self.bot.send_photo(chat_id=chat_id, photo=open(f"images/{book_detail['image_name']}", 'rb'),
                                            caption=f'Книга "{book_detail["title"]}"\n'
                                            f'подешевела на {sale}% ({book_detail["price"]}р.)')
         logger.show_caption_photo(notification)
 
     def callback_handler(self, call):
-        """Button Handling Method."""
+        """
+        Button Handling Method.
+        """
 
         if call.data == 'add_link':
-            try:
-                self.___add_book(call)
-            except KeyError as er:
-                self.bot.answer_callback_query(callback_query_id=call.id,
-                                               text='Попробуйте отправить ссылку ещё раз ❌')
-                logger.show_error(system="Bot.book_to_db()", error=repr(er))
-            else:
-                self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список ✅')
+            self.___add_book(call)
 
         elif call.data == 'no_add_link':
             self.bot.answer_callback_query(callback_query_id=call.id, text='Отменяем запуск боеголовок, сэр 👨🏼‍✈️')
@@ -186,30 +185,45 @@ class Bot:
         elif call.data == "delete_book":
             self.__delete_book(call)
 
-        try:
-            self.bot.edit_message_reply_markup(chat_id=call.message.chat.id,
-                                               message_id=call.message.message_id)
-            self.book_to_add.pop(call.message.message_id)
-        except:
-            pass
+        self.bot.edit_message_reply_markup(chat_id=call.message.chat.id,
+                                           message_id=call.message.message_id)
 
     def __delete_book(self, call):
-        """Remove a book from subscriptions."""
+        """
+        Remove a book from subscriptions.
+
+        If the book does not exist in the book queue for deletion,
+         a message is displayed asking you to repeat.
+        """
 
         database = Database()
         try:
             link = self.book_to_delete[call.message.message_id]['link']
             database.delete_subscription(call.message.chat.id, link)
+            self.book_to_delete.pop(call.message.message_id)
         except KeyError:
             self.bot.answer_callback_query(callback_query_id=call.id, text='Попробуйте ещё раз 🐙')
+
         else:
             self.bot.answer_callback_query(callback_query_id=call.id, text='Книга удалена 🦄')
 
     def ___add_book(self, call):
-        """Add a book from subscriptions."""
+        """
+        Add a book from subscriptions.
+
+        If the book does not exist in the queue of books to be added,
+         then a message is displayed asking you to repeat.
+        """
 
         database = Database()
-        book_ = self.book_to_add[call.message.message_id]
-        database.insert_book(book_, [call.message.chat.id])
-        database.insert_follower([book_['link']], call)
-        database.start_following(call.message.chat.id)
+        try:
+            book_ = self.book_to_add[call.message.message_id]
+            database.insert_book(book_, [call.message.chat.id])
+            database.insert_follower([book_['link']], call)
+            database.start_following(call.message.chat.id)
+            self.book_to_add.pop(call.message.message_id)
+        except KeyError:
+            self.bot.answer_callback_query(callback_query_id=call.id,
+                                           text='Попробуйте отправить ссылку ещё раз ❌')
+        else:
+            self.bot.answer_callback_query(callback_query_id=call.id, text='Книга добавлена в список ✅')

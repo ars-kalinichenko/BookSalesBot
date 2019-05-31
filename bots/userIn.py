@@ -33,10 +33,7 @@ def stop(message: Message):
 
 @bot.message_handler(content_types=['text'])
 def small_talk(message: Message):
-    if "добавить" in message.text.lower():
-        bot_action.adding_book(message)
-    else:
-        bot_action.small_talk(message)
+    bot_action.adding_book(message)
 
 
 @bot.callback_query_handler(func=lambda call: True)
