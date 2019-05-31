@@ -36,7 +36,8 @@ class Bot:
         self.typing(1, message)
         self.bot.send_message(chat_id=message.from_user.id, parse_mode='Markdown',
                               text="Привет, я помогу тебе отслеживать скидки на книги!\n"
-                                   "Чтобы добавить книгу, напиши:\n`добавить [ссылка на книгу]`")
+                                   "Хочешь добавить книгу?\n"
+                                   "Просто отправь `ссылку` на неё.")
 
     def show_list(self, message: Message):
         """

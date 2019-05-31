@@ -23,31 +23,27 @@ class ParserManager:
         If AttributeError (is an invalid reference), the cause is logged
          and the exception is passed to a higher level.
         """
-
         try:
             if 'https://www.labirint.ru/books/' in link:
                 lab = labirint.Labirint()
-                lab.parsing(link)
-                detail_book = lab.detail_book
+                detail_book = lab.parsing(link)
                 self.save_photo(detail_book)
                 return detail_book.copy()
 
             elif 'https://www.chitai-gorod.ru/catalog/book/' in link:
                 ch_gorod = chitai_gorod.ChitaiGorod()
-                ch_gorod.parsing(self.shorten_link(link))
-                detail_book = ch_gorod.detail_book
+                detail_book = ch_gorod.parsing(self.shorten_link(link))
                 self.save_photo(detail_book)
                 return detail_book.copy()
 
             elif 'https://book24.ru/product/' in link:
                 book24_ = book24.Book24()
-                book24_.parsing(self.shorten_link(link))
-                detail_book = book24_.detail_book
+                detail_book = book24_.parsing(self.shorten_link(link))
                 self.save_photo(detail_book)
                 return detail_book.copy()
 
-        except AttributeError as ae:
-            logger.show_error(system="parser_manager", error=repr(ae))
+        except Exception as er:
+            logger.show_error(system="parser_manager", error=repr(er))
             raise AttributeError
 
     @staticmethod

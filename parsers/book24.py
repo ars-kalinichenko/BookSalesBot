@@ -4,7 +4,6 @@ from parsers.iparser import IParser
 
 class Book24(IParser):
     """Parser for book24.ru"""
-    detail_book = {}
 
     def get_price(self, soup):
         prices = soup.select('div.item-actions__prices')
@@ -27,13 +26,15 @@ class Book24(IParser):
         return f"{id_book}.{im_extension}"
 
     def parsing(self, link):
+        detail_book = {}
         soup = self.get_soup(link)
         try:
-            self.detail_book['link'] = link
-            self.detail_book['title'] = self.get_title(soup)
-            self.detail_book['price'] = self.get_price(soup)
-            self.detail_book['image_link'] = self.get_image_link(soup)
-            self.detail_book['image_name'] = self.get_image_name(self.detail_book['image_link'])
+            detail_book['link'] = link
+            detail_book['title'] = self.get_title(soup)
+            detail_book['price'] = self.get_price(soup)
+            detail_book['image_link'] = self.get_image_link(soup)
+            detail_book['image_name'] = self.get_image_name(detail_book['image_link'])
         except AttributeError as ae:
             logger.show_error(system="Book24", error=repr(ae))
             raise AttributeError
+        return detail_book
