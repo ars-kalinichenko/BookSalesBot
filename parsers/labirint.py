@@ -38,7 +38,7 @@ class Labirint(IParser):
             detail_book['price'] = self.get_price(soup)
             detail_book['image_link'] = self.get_image_link(soup)
             detail_book['image_name'] = self.get_image_name(detail_book['image_link'])
-        except AttributeError as ae:
+        except (AttributeError, IndexError) as ae:
             logger.show_error(system="Labirint", error=repr(ae))
             raise AttributeError
         return detail_book
