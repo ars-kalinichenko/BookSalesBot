@@ -10,7 +10,7 @@ class CheckerBook:
     @staticmethod
     def check_book():
         """
-        This method checks book discounts every 36 minutes.
+        This method checks book discounts every 36 minutes and removes books from which no one is subscribed.
         If there is a discount, then it calls the method of notifying subscribers.
         """
 
@@ -19,6 +19,7 @@ class CheckerBook:
         while True:
             database = Database()
             books = database.get_books()
+            database.delete_empty_subscriptions()
 
             for book in books:
                 try:

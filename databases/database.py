@@ -103,6 +103,11 @@ class Database:
         self.cursor.execute("UPDATE followers SET subscriptions = array_remove(subscriptions, %s) WHERE chat_id = %s",
                             (link, chat_id))
 
+    def delete_empty_subscriptions(self):
+        """Removes books from which no one is subscribed."""
+
+        self.cursor.execute("DELETE from books WHERE followers = '{}'")
+
     def __del__(self):
         self.cursor.close()
         self.connection.close()
